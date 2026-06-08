@@ -3,98 +3,125 @@
 <head>
 <meta charset="UTF-8">
 <style>
+  /* Убираем прокрутку полностью */
   html, body {
     margin: 0;
     padding: 0;
+    overflow: hidden;
     background: transparent;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  }
-  
-  /* Контейнер, который держит иконку по центру и дает простор снизу */
-  .wrapper {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Прижимаем иконку к верху блока, чтобы всё меню уходило вниз */
-    min-height: 400px; 
-    padding-top: 10px;
-    background: transparent;
+    align-items: center;
+  }
+
+  /* Контейнер строго под размер вашей иконки */
+  .tile-container {
+    position: relative;
+    width: 220px;
+    height: 150px; /* Высота вашей стандартной плитки */
+    border-radius: 12px;
+    cursor: pointer;
+    perspective: 1000px; /* Для красивого эффекта */
+  }
+
+  .tile-card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  /* Класс, который сработает при клике */
+  .tile-container.flipped .tile-card {
+    transform: rotateY(180deg);
+  }
+
+  .front, .back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 12px;
     box-sizing: border-box;
   }
 
-  .dropdown {
-    position: relative;
-    display: inline-block;
+  /* Лицевая сторона — ваша картинка */
+  .front {
+    background: transparent;
   }
-
-  .tile-img {
+  .front img {
     width: 100%;
-    max-width: 220px;
-    height: auto;
-    display: block;
+    height: 100%;
+    object-fit: cover;
     border-radius: 12px;
-    transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
-    cursor: pointer;
+    transition: transform 0.25s ease, filter 0.25s ease;
+  }
+  .tile-container:not(.flipped):hover .front img {
+    transform: scale(1.03);
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.15)) drop-shadow(0 0 8px rgba(244, 67, 54, 0.4));
   }
 
-  /* === КЛЮЧЕВОЕИЗМЕНЕНИЕ: Меню падает строго вниз === */
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    top: 105%; /* Жестко закрепляем под нижней границей картинки */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #ffffff;
-    min-width: 220px;
-    box-shadow: 0px 10px 25px rgba(0,0,0,0.15);
-    border-radius: 8px;
-    z-index: 99999; /* Выводим меню на самый передний план */
-    padding: 6px 0;
-    border: 1px solid #e0e0e0;
+  /* Обратная сторона — красивое меню со ссылками внутри плитки */
+  .back {
+    background: #ffffff;
+    border: 2px solid #cc1818; /* Красный контур YouTube */
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8px;
   }
 
-  .dropdown-content a {
+  .back a {
     color: #333333;
-    padding: 11px 16px;
     text-decoration: none;
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    border-bottom: 1px solid #f0f0f0;
-    transition: background-color 0.2s, color 0.2s;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 8px;
+    margin: 2px 0;
+    border-radius: 6px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .dropdown-content a:last-child {
-    border-bottom: none;
-  }
-
-  .dropdown-content a:hover {
-    background-color: #f9f9f9;
-    color: #cc1818; /* Красный цвет YouTube */
-  }
-
-  /* Показываем меню строго при наведении мыши */
-  .dropdown:hover .dropdown-content {
-    display: block;
-  }
-
-  .dropdown:hover .tile-img {
-    transform: scale(1.05);
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.12)) drop-shadow(0 0 8px rgba(204, 24, 24, 0.4));
+  .back a:hover {
+    background: #ffebee;
+    color: #cc1818;
   }
 </style>
 </head>
 <body>
 
-  <div class="wrapper">
-    <div class="dropdown">
-      <img src="pic-video.png" class="tile-img" alt="Видеоматериалы">
-      <div class="dropdown-content">
-        <a href="https://www.youtube.com/watch?v=7lMB1yGrRQ0" target="_blank">📺 Видеоурок 1</a>
-        <a href="https://www.youtube.com/watch?v=iKvnFUW8WHQ" target="_blank">📺 Видеоурок 2</a>
-        <a href="https://www.youtube.com/watch?v=AY1CuqkQMqc&list=PL4t_m8S_6E2BdsHD3G78-h2xhtauHUrIG&index=76" target="_blank">📺 Дополнительный разбор</a>
+  <div class="tile-container" id="videoTile">
+    <div class="tile-card">
+      <!-- Лицо плитки -->
+      <div class="front">
+        <img src="pic-video.png" alt="Видеоматериалы">
+      </div>
+      <!-- Меню внутри плитки -->
+      <div class="back">
+        <a href="https://www.youtube.com/watch?v=7lMB1yGrRQ0" target="_blank" onclick="event.stopPropagation();">📺 Видеоурок 1</a>
+        <a href="https://www.youtube.com/watch?v=iKvnFUW8WHQ" target="_blank" onclick="event.stopPropagation();">📺 Видеоурок 2</a>
+        <a href="https://www.youtube.com/watch?v=AY1CuqkQMqc&list=PL4t_m8S_6E2BdsHD3G78-h2xhtauHUrIG&index=76" target="_blank" onclick="event.stopPropagation();">📺 Доп. разбор</a>
       </div>
     </div>
   </div>
+
+  <script>
+    // Скрипт для переворота по клику
+    const tile = document.getElementById('videoTile');
+    tile.addEventListener('click', function() {
+      this.classList.toggle('flipped');
+    });
+  </script>
 
 </body>
 </html>

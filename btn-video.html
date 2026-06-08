@@ -10,15 +10,13 @@
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   }
   
-  /* === ГЛАВНАЯ ХИТРОСТЬ === */
-  /* Мы создаем высокий невидимый контейнер. 
-     Верхний и нижний padding (по 160px) принудительно расширят блок на Google Сайте */
+  /* Контейнер, который держит иконку по центру и дает простор снизу */
   .wrapper {
     display: flex;
     justify-content: center;
-    align-items: center;
-    min-height: 400px; /* Задаем гарантированную высоту */
-    padding: 160px 0;  
+    align-items: flex-start; /* Прижимаем иконку к верху блока, чтобы всё меню уходило вниз */
+    min-height: 400px; 
+    padding-top: 10px;
     background: transparent;
     box-sizing: border-box;
   }
@@ -38,18 +36,18 @@
     cursor: pointer;
   }
 
-  /* Меню теперь выпадает ВНИЗ. Свободного места внизу теперь предостаточно! */
+  /* === КЛЮЧЕВОЕИЗМЕНЕНИЕ: Меню падает строго вниз === */
   .dropdown-content {
     display: none;
     position: absolute;
-    top: 105%; /* Появляется сразу под иконкой */
+    top: 105%; /* Жестко закрепляем под нижней границей картинки */
     left: 50%;
     transform: translateX(-50%);
     background-color: #ffffff;
     min-width: 220px;
-    box-shadow: 0px 8px 24px rgba(0,0,0,0.18);
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.15);
     border-radius: 8px;
-    z-index: 9999;
+    z-index: 99999; /* Выводим меню на самый передний план */
     padding: 6px 0;
     border: 1px solid #e0e0e0;
   }
@@ -71,10 +69,10 @@
 
   .dropdown-content a:hover {
     background-color: #f9f9f9;
-    color: #cc1818;
+    color: #cc1818; /* Красный цвет YouTube */
   }
 
-  /* Раскрытие при наведении */
+  /* Показываем меню строго при наведении мыши */
   .dropdown:hover .dropdown-content {
     display: block;
   }

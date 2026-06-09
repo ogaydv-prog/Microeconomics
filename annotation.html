@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  /* Наша вчерашняя кнопка-плитка, которая оживает при наведении */
+  .main-tile-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-block;
+    transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.25s ease;
+  }
+  /* Эффект, когда кнопка оживает, увеличивается и мигает-подсвечивается при наведении */
+  .main-tile-btn:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)) drop-shadow(0 0 10px rgba(76, 175, 80, 0.5));
+  }
+  .main-tile-btn:active {
+    transform: scale(0.98);
+  }
+  .tile-img {
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+    display: block;
+    border-radius: 15px;
+  }
+</style>
+</head>
+<body>
+
+  <button id="btn-annotation" class="main-tile-btn">
+    <img src="pic-annotation.png" class="tile-img" alt="Управленческая экономика">
+  </button>
+
+<script>
+  // Скрипт, который при нажатии открывает ваш Google Документ с описанием курса
+  document.getElementById("btn-annotation").addEventListener("click", function() {
+    window.open("https://docs.google.com/document/d/1cKGxEBSvWsXardvzQgSZxaMNMpy5cPFm/edit?usp=sharing", "_blank");
+  });
+</script>
+
+</body>
+</html>

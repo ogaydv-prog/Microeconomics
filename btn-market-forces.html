@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  /* Наша фирменная пружинящая кнопка */
+  .main-tile-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-block;
+    transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.25s ease;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Эффект увеличения и сочной изумрудной неоновой подсветки при наведении */
+  .main-tile-btn:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)) drop-shadow(0 0 12px rgba(16, 185, 129, 0.6));
+  }
+  .main-tile-btn:active {
+    transform: scale(0.98);
+  }
+  .tile-img {
+    width: 100%;
+    max-width: 250px; /* Стандартный размер плитки под стиль остальных элементов */
+    height: auto;
+    display: block;
+    border-radius: 12px;
+  }
+</style>
+</head>
+<body>
+
+  <button id="btn-market-forces" class="main-tile-btn">
+    <img src="pic-market-forces.png" class="tile-img" alt="Переход на тему: Рыночные силы спроса и предложения">
+  </button>
+
+<script>
+  document.getElementById("btn-market-forces").addEventListener("click", function() {
+    // Точный и проверенный адрес вашей страницы на Google Сайте
+    const targetUrl = "https://sites.google.com/view/managerial-economics-mba/%D1%80%D1%8B%D0%BD%D0%BE%D1%87%D0%BD%D1%8B%D0%B5-%D1%81%D0%B8%D0%BB%D1%8B-%D1%81%D0%BF%D1%80%D0%BE%D1%81-%D0%B8-%D0%BF%D1%80%D0%B5%D0%B4%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5"; 
+    
+    window.open(targetUrl, "_blank");
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  /* Наша фирменная пружинящая кнопка */
+  .main-tile-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-block;
+    transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.25s ease;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Эффект увеличения и мягкой неоновой подсветки (соответствует синему цвету кнопки Лекция) */
+  .main-tile-btn:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)) drop-shadow(0 0 12px rgba(2, 132, 199, 0.6));
+  }
+  .main-tile-btn:active {
+    transform: scale(0.98);
+  }
+  .tile-img {
+    width: 100%;
+    max-width: 250px; /* Идеальный размер плитки */
+    height: auto;
+    display: block;
+    border-radius: 12px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Кнопка со ссылкой на изображение из вашего репозитория GitHub -->
+  <button id="btn-lecture2" class="main-tile-btn">
+    <img src="pic-lecture2.png" class="tile-img" alt="Лекция 2: Рыночные силы спроса и предложения">
+  </button>
+
+<script>
+  document.getElementById("btn-lecture2").addEventListener("click", function() {
+    // Открытие лекции на Google Диске в новой вкладке
+    window.open("https://docs.google.com/document/d/1YG2QIFIDYd3XtuHhS3AsP_a7OFvfHn08/edit?usp=drive_link&ouid=109725301150629205728&rtpof=true&sd=true", "_blank");
+  });
+</script>
+
+</body>
+</html>

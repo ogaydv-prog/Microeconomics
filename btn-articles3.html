@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Arial', sans-serif;
+  }
+
+  /* Компактный 3D Контейнер для переворота (теперь 210x210px вместо прежних 250px) */
+  .flip-card {
+    background-color: transparent;
+    width: 210px;
+    height: 210px;
+    perspective: 1000px;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.25s ease;
+  }
+
+  /* Эффект увеличения и бирюзового свечения плитки при наведении */
+  .flip-card:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.2)) drop-shadow(0 0 10px rgba(20, 184, 166, 0.6));
+  }
+
+  /* Эффект легкого сжатия при нажатии */
+  .flip-card:active {
+    transform: scale(0.98);
+  }
+
+  /* Внутренняя оболочка */
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  /* Класс переворота, управляемый через JS */
+  .flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  /* Лицевая и обратная стороны */
+  .flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  /* ЛИЦЕВАЯ СТОРОНА (Обложка) */
+  .flip-card-front {
+    background-color: #ffffff;
+  }
+
+  .tile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ОБРАТНАЯ СТОРОНА (Темный премиум-фон с бирюзовым неоновым кантом) */
+  .flip-card-back {
+    background-color: #111418;
+    color: #ffffff;
+    transform: rotateY(180deg);
+    border: 2px solid rgba(20, 184, 166, 0.7); /* Бирюзовый кант */
+    padding: 10px 12px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  /* Шапка обратной стороны */
+  .back-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #2d3748;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+  }
+
+  .back-title {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #14b8a6; /* Бирюзовый цвет под стиль статей */
+    letter-spacing: 0.5px;
+  }
+
+  /* Кнопка закрытия/переворота обратно */
+  .btn-close {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0 3px;
+    transition: color 0.2s;
+  }
+
+  .btn-close:hover {
+    color: #ffffff;
+  }
+
+  /* Список статей */
+  .article-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-grow: 1;
+    justify-content: center; /* Центрируем наши 2 статьи по высоте */
+  }
+
+  /* Ссылки на статьи */
+  .article-link {
+    display: block;
+    background: rgba(255, 255, 255, 0.04);
+    color: #cbd5e1;
+    text-decoration: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 9.5px;
+    line-height: 1.35;
+    text-align: left;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all 0.2s ease;
+  }
+
+  .article-link strong {
+    color: #14b8a6;
+    display: block;
+    font-size: 8.5px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    letter-spacing: 0.3px;
+  }
+
+  .article-link:hover {
+    background: rgba(20, 184, 166, 0.12);
+    border-color: #14b8a6;
+    color: #ffffff;
+    transform: translateX(3px);
+  }
+</style>
+</head>
+<body>
+
+<div class="flip-card" id="cardContainer">
+  <div class="flip-card-inner">
+    
+    <!-- Лицевая сторона кнопки -->
+    <div class="flip-card-front" id="cardFront">
+      <img src="pic-articles3.png" class="tile-img" alt="Статьи для чтения 3">
+    </div>
+
+    <!-- Обратная сторона кнопки с 2 ключевыми статьями -->
+    <div class="flip-card-back">
+      <div class="back-header">
+        <span class="back-title">Статьи для анализа</span>
+        <button class="btn-close" id="btnClose" title="Назад">✕</button>
+      </div>
+      
+      <!-- Список интерактивных ссылок по вашей теме -->
+      <div class="article-list">
+        <a href="https://www.ft.com/content/f9f54ec9-8129-45bb-b9d2-9aacda1278bf?syn-25a6b1a6=1" target="_blank" class="article-link" title="Financial Times: Анализ рыночных изменений">
+          <strong>Financial Times</strong>
+          Кейс-анализ ценового давления и эластичности на рынках.
+        </a>
+        <a href="https://www.reuters.com/business/healthcare-pharmaceuticals/novo-nordisk-risks-weight-loss-price-war-discount-pressures-deepen-2026-02-04/" target="_blank" class="article-link" title="Reuters: Угроза ценовой войны для Novo Nordisk">
+          <strong>Reuters Case Study</strong>
+          Novo Nordisk и риски ценовой войны: эластичность спроса на лекарства.
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const card = document.getElementById('cardContainer');
+  const cardFront = document.getElementById('cardFront');
+  const btnClose = document.getElementById('btnClose');
+
+  // Переворот на обратную сторону при клике по лицевой
+  cardFront.addEventListener('click', function(e) {
+    card.classList.add('flipped');
+  });
+
+  // Переворот обратно при клике на крестик
+  btnClose.addEventListener('click', function(e) {
+    e.stopPropagation(); // Останавливаем событие, чтобы исключить повторный переворот
+    card.classList.remove('flipped');
+  });
+
+  // Предотвращаем переворот карты обратно при переходе по внешним ссылкам
+  const links = document.querySelectorAll('.article-link');
+  links.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Интерактивная кнопка Презентация 2</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  /* Фирменная пружинящая кнопка */
+  .main-tile-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-block;
+    transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.25s ease;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Эффект увеличения и сочного красного свечения при наведении (под цвет шапки) */
+  .main-tile-btn:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)) drop-shadow(0 0 12px rgba(220, 38, 38, 0.65));
+  }
+  
+  .main-tile-btn:active {
+    transform: scale(0.98);
+  }
+  
+  .tile-img {
+    width: 100%;
+    max-width: 250px; /* Идеальный размер, соответствующий остальным плиткам */
+    height: auto;
+    display: block;
+    border-radius: 12px;
+  }
+</style>
+</head>
+<body>
+
+  <button id="btn-preza2" class="main-tile-btn">
+    <!-- Ссылка на загруженное на GitHub изображение красной презентации -->
+    <img src="pic-preza2.png" class="tile-img" alt="Презентация: Рыночные силы спроса и предложения" onerror="this.src='https://placehold.co/250x250/b91c1c/ffffff?text=Презентация+2'">
+  </button>
+
+<script>
+  document.getElementById("btn-preza2").addEventListener("click", function() {
+    // Ссылка на объединенную презентацию на Google Диске
+    window.open("https://docs.google.com/presentation/d/1-2vzCqDckBRuLeQu-UzxMeL_di_PC7Zc/edit?usp=drive_link&ouid=109725301150629205728&rtpof=true&sd=true", "_blank");
+  });
+</script>
+
+</body>
+</html>

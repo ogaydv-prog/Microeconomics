@@ -16,28 +16,26 @@
     font-family: 'Arial', sans-serif;
   }
 
-  /* Компактный 3D Контейнер для переворота (теперь 210x210px вместо прежних 250px) */
   .flip-card {
     background-color: transparent;
-    width: 210px;
-    height: 210px;
+    width: 250px;
+    height: 250px;
     perspective: 1000px;
     cursor: pointer;
     transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.25s ease;
   }
 
-  /* Эффект увеличения и бирюзового свечения плитки при наведении */
+  /* Эффект увеличения и мягкого бирюзового свечения при наведении */
   .flip-card:hover {
     transform: scale(1.05);
-    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.2)) drop-shadow(0 0 10px rgba(20, 184, 166, 0.6));
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2)) drop-shadow(0 0 12px rgba(20, 184, 166, 0.6));
   }
 
-  /* Эффект легкого сжатия при нажатии */
+  /* Пружинящее сжатие при клике */
   .flip-card:active {
     transform: scale(0.98);
   }
 
-  /* Внутренняя оболочка */
   .flip-card-inner {
     position: relative;
     width: 100%;
@@ -47,12 +45,12 @@
     transform-style: preserve-3d;
   }
 
-  /* Класс переворота, управляемый через JS */
+  /* Класс триггера переворота */
   .flip-card.flipped .flip-card-inner {
     transform: rotateY(180deg);
   }
 
-  /* Лицевая и обратная стороны */
+  /* Оформление сторон карточки */
   .flip-card-front, .flip-card-back {
     position: absolute;
     width: 100%;
@@ -76,13 +74,12 @@
     display: block;
   }
 
-  /* ОБРАТНАЯ СТОРОНА (Темный премиум-фон с бирюзовым неоновым кантом) */
   .flip-card-back {
     background-color: #111418;
     color: #ffffff;
     transform: rotateY(180deg);
     border: 2px solid rgba(20, 184, 166, 0.7); /* Бирюзовый кант */
-    padding: 10px 12px 12px 12px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -94,28 +91,28 @@
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #2d3748;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
     flex-shrink: 0;
   }
 
   .back-title {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
-    color: #14b8a6; /* Бирюзовый цвет под стиль статей */
+    color: #14b8a6; /* Фирменный бирюзовый цвет статей */
     letter-spacing: 0.5px;
   }
 
-  /* Кнопка закрытия/переворота обратно */
+  /* Кнопка закрытия */
   .btn-close {
     background: none;
     border: none;
     color: #94a3b8;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: bold;
-    padding: 0 3px;
+    padding: 0 4px;
     transition: color 0.2s;
   }
 
@@ -123,13 +120,12 @@
     color: #ffffff;
   }
 
-  /* Список статей */
   .article-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
     flex-grow: 1;
-    justify-content: center; /* Центрируем наши 2 статьи по высоте */
+    justify-content: center; /* Центрируем статьи по высоте в объеме 250px */
   }
 
   /* Ссылки на статьи */
@@ -138,10 +134,10 @@
     background: rgba(255, 255, 255, 0.04);
     color: #cbd5e1;
     text-decoration: none;
-    padding: 8px 10px;
+    padding: 10px 12px;
     border-radius: 6px;
-    font-size: 9.5px;
-    line-height: 1.35;
+    font-size: 10.5px;
+    line-height: 1.4;
     text-align: left;
     border: 1px solid rgba(255, 255, 255, 0.06);
     transition: all 0.2s ease;
@@ -150,17 +146,18 @@
   .article-link strong {
     color: #14b8a6;
     display: block;
-    font-size: 8.5px;
+    font-size: 9px;
     text-transform: uppercase;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
     letter-spacing: 0.3px;
   }
 
+  /* Плавное смещение ссылки вправо при наведении */
   .article-link:hover {
     background: rgba(20, 184, 166, 0.12);
     border-color: #14b8a6;
     color: #ffffff;
-    transform: translateX(3px);
+    transform: translateX(4px);
   }
 </style>
 </head>
@@ -209,7 +206,7 @@
 
   // Переворот обратно при клике на крестик
   btnClose.addEventListener('click', function(e) {
-    e.stopPropagation(); // Останавливаем событие, чтобы исключить повторный переворот
+    e.stopPropagation(); // Исключаем повторный переворот карточки из-за всплытия события
     card.classList.remove('flipped');
   });
 

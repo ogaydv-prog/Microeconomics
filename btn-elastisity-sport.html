@@ -5,54 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Запуск симулятора</title>
     <style>
-        /* Принудительно белый фон для всей страницы */
-        body { 
-            background-color: #ffffff !important; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-            margin: 0; 
-        }
-
-        /* Контейнер кнопки */
-        .launcher-btn {
-            display: block;
-            width: 300px; /* Можно настроить нужный размер */
-            height: auto;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            cursor: pointer;
-            border: none;
-            background: none;
+        /* Обеспечиваем белый фон для всего документа */
+        html, body {
+            margin: 0;
             padding: 0;
-            outline: none;
-        }
-
-        /* Увеличение при наведении */
-        .launcher-btn:hover {
-            transform: scale(1.05);
-            opacity: 0.9;
-        }
-
-        /* Эффект нажатия */
-        .launcher-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* Сохранение пропорций картинки */
-        .launcher-btn img {
-            display: block;
             width: 100%;
+            height: 100%;
+            background-color: #ffffff !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Контейнер-ссылка */
+        .launcher-link {
+            display: inline-block;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            text-decoration: none;
+            /* Убираем любые ограничения размера */
+            line-height: 0;
+        }
+
+        .launcher-link:hover {
+            transform: scale(1.02);
+        }
+
+        /* Картинка: сохраняем исходный размер и пропорции */
+        .launcher-link img {
+            display: block;
+            max-width: 100vw; /* Ограничение только размером экрана */
+            max-height: 100vh;
+            width: auto;
             height: auto;
-            object-fit: contain; /* Картинка не обрезается */
+            object-fit: contain; /* Картинка полностью помещается без обрезки */
+            border: none;
         }
     </style>
 </head>
 <body>
 
-    <a href="sim-elastisity1.html" class="launcher-btn">
-        <!-- Используйте прямой путь к вашей картинке -->
-        <img src="pic-sim-elastisity-sport.png" alt="Запустить симуляцию" onerror="this.style.display='none'; this.parentNode.innerHTML='<h2>Симулятор эластичности</h2>'">
+    <a href="sim-elastisity1.html" class="launcher-link">
+        <img src="pic-sim-elastisity-sport.png" alt="Запустить симуляцию">
     </a>
 
 </body>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Полное устранение отступов и скроллбаров для точного соответствия размеру картинки */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: transparent;
+        }
+        
+        .btn-img {
+            transition: transform 0.3s ease, filter 0.3s ease;
+            cursor: pointer;
+            display: block;
+            width: auto;
+            height: auto;
+        }
+
+        /* Эффекты при наведении */
+        .btn-img:hover {
+            transform: scale(1.05);
+            filter: brightness(1.15) drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+        }
+
+        /* Эффект нажатия */
+        .btn-img:active {
+            transform: scale(0.97);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ссылка на Google Презентацию -->
+    <a href="https://docs.google.com/presentation/d/1pMIOCo2zRMt1GL3viIhrTzeZV3cFghy9/edit?usp=sharing" target="_blank">
+        <img src="https://raw.githubusercontent.com/ogaydv-prog/Simulator-NPV/main/pic-preza31.png" 
+             alt="Открыть презентацию" 
+             class="btn-img"
+             draggable="false">
+    </a>
+
+</body>
+</html>

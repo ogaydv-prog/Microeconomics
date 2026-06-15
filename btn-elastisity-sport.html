@@ -2,10 +2,12 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Запуск симулятора</title>
     <style>
+        /* Принудительно белый фон для всей страницы */
         body { 
-            background-color: #ffffff; 
+            background-color: #ffffff !important; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
@@ -15,18 +17,21 @@
 
         /* Контейнер кнопки */
         .launcher-btn {
-            display: inline-block;
-            transition: transform 0.3s ease, filter 0.3s ease;
+            display: block;
+            width: 300px; /* Можно настроить нужный размер */
+            height: auto;
+            transition: transform 0.3s ease, opacity 0.3s ease;
             cursor: pointer;
             border: none;
             background: none;
             padding: 0;
+            outline: none;
         }
 
-        /* Увеличение и легкая подсветка при наведении */
+        /* Увеличение при наведении */
         .launcher-btn:hover {
             transform: scale(1.05);
-            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.2));
+            opacity: 0.9;
         }
 
         /* Эффект нажатия */
@@ -34,17 +39,19 @@
             transform: scale(0.98);
         }
 
-        img {
+        /* Сохранение пропорций картинки */
+        .launcher-btn img {
             display: block;
-            max-width: 100%;
+            width: 100%;
             height: auto;
+            object-fit: contain; /* Картинка не обрезается */
         }
     </style>
 </head>
 <body>
 
-    <!-- Ссылка-кнопка с визуальными эффектами -->
     <a href="sim-elastisity1.html" class="launcher-btn">
+        <!-- Используйте прямой путь к вашей картинке -->
         <img src="pic-sim-elastisity-sport.png" alt="Запустить симуляцию" onerror="this.style.display='none'; this.parentNode.innerHTML='<h2>Симулятор эластичности</h2>'">
     </a>
 

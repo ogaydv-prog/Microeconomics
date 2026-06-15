@@ -3,31 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кнопка симулятора эластичности</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .btn-hover-effect {
-            transition: transform 0.3s ease, filter 0.3s ease;
+        /* Плавные переходы для анимации */
+        .simulator-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-block;
+            outline: none;
+            border: none;
+            background: transparent;
+            padding: 0;
             cursor: pointer;
-            display: block;
         }
-        .btn-hover-effect:hover {
-            transform: scale(1.05);
-            filter: brightness(1.2) drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+
+        /* Эффект при наведении */
+        .simulator-btn:hover {
+            transform: scale(1.08);
+            filter: brightness(1.2) drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
         }
-        .btn-hover-effect:active {
-            transform: scale(0.98);
+
+        /* Эффект при нажатии */
+        .simulator-btn:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen bg-transparent">
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
 
-    <!-- Кнопка с изображением -->
-    <a href="sim-elastisity-sport.html" class="btn-hover-effect">
+    <!-- Кнопка, которая ведет на файл симулятора -->
+    <a href="sim-elastisity-sport.html" class="simulator-btn">
         <img 
             src="pic-sim-elastisity-sport.png" 
-            alt="Симулятор эластичности спроса" 
-            class="w-auto h-auto max-w-full"
-            onerror="this.style.display='none'; this.parentElement.innerHTML='Изображение не найдено';"
+            alt="Запустить симулятор"
+            class="block"
         >
     </a>
 

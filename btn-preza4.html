@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Убираем все отступы и скроллбары */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: transparent;
+        }
+        
+        /* Стилизация изображения-кнопки */
+        .btn-img {
+            /* Плавный переход для эффекта "оживания" */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease;
+            cursor: pointer;
+            display: block;
+            /* Растягиваем на весь размер контейнера, который задает iframe */
+            max-width: 100%;
+            height: auto;
+            border-radius: 16px; /* Мягкое скругление углов */
+        }
+
+        /* Эффект при наведении — кнопка оживает, приподнимается и светится */
+        .btn-img:hover {
+            transform: scale(1.04) translateY(-4px);
+            /* Сине-золотая подсветка AlmaU */
+            filter: brightness(1.12) 
+                    drop-shadow(0 12px 20px rgba(30, 64, 175, 0.45)) 
+                    drop-shadow(0 0 15px rgba(218, 192, 163, 0.35));
+        }
+
+        /* Эффект при нажатии */
+        .btn-img:active {
+            transform: scale(0.97) translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+
+    <a href="https://docs.google.com/presentation/d/10-bZv9VVTLGmJ2GswXVEJmzkLeGzKy6Z/edit?usp=drive_link&ouid=109725301150629205728&rtpof=true&sd=true" target="_blank" class="inline-block select-none">
+        <img src="https://raw.githubusercontent.com/ogaydv-prog/Simulator-NPV/main/pic-preza4.png" 
+             alt="Презентация 4 — Производственные издержки" 
+             class="btn-img"
+             draggable="false">
+    </a>
+
+</body>
+</html>

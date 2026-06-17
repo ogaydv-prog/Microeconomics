@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Универсальный экономический симулятор MBA</title>
+<!-- Подключение Tailwind CSS для премиального темного дизайна -->
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0b0f13;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.05) 0px, transparent 50%);
+  }
+
+  /* Стилизация полей ввода */
+  input[type="number"] {
+    background-color: #151b22;
+    border: 1px solid #30363d;
+    color: #f0f6fc;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-family: monospace;
+    outline: none;
+    transition: all 0.2s;
+  }
+  input[type="number"]:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  }
+
+  /* Премиальный винтажный аналоговый ползунок цены */
+  input[type="range"].vintage-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    background: #151b22;
+    height: 12px;
+    border-radius: 4px;
+    border: 1px solid #30363d;
+    outline: none;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Стилизация бегунка (Chrome, Safari, Opera, Edge) */
+  input[type="range"].vintage-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 32px;
+    /* Металлическая текстура с яркой красной линией по центру */
+    background: linear-gradient(to right, 
+      #8a95a5 0%, 
+      #cfd8dc 30%, 
+      #b0bec5 45%, 
+      #ef4444 48%, 
+      #ef4444 52%, 
+      #b0bec5 55%, 
+      #cfd8dc 70%, 
+      #8a95a5 100%
+    );
+    border: 1.5px solid #0b0f13;
+    border-radius: 3px;
+    cursor: pointer;
+    box-shadow: 
+      0 4px 8px rgba(0, 0, 0, 0.5), 
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    transition: transform 0.1s ease;
+  }
+  input[type="range"].vintage-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.08);
+  }
+
+  /* Стилизация бегунка (Firefox) */
+  input[type="range"].vintage-slider::-moz-range-thumb {
+    width: 18px;
+    height: 32px;
+    background: linear-gradient(to right, 
+      #8a95a5 0%, 
+      #cfd8dc 30%, 
+      #b0bec5 45%, 
+      #ef4444 48%, 
+      #ef4444 52%, 
+      #b0bec5 55%, 
+      #cfd8dc 70%, 
+      #8a95a5 100%
+    );
+    border: 1.5px solid #0b0f13;
+    border-radius: 3px;
+    cursor: pointer;
+    box-shadow: 
+      0 4px 8px rgba(0, 0, 0, 0.5), 
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    transition: transform 0.1s ease;
+  }
+  input[type="range"].vintage-slider::-moz-range-thumb:hover {
+    transform: scale(1.08);
+  }
+</style>
+</head>
+<body class="text-slate-100 min-h-screen p-3 md:p-6 flex flex-col items-center justify-start overflow-x-hidden">
+
+<div class="w-full max-w-7xl bg-[#111518]/95 border border-emerald-500/10 shadow-[0_0_50px_rgba(16,185,129,0.05)] rounded-2xl p-4 md:p-6 backdrop-blur-md">
+  
+  <!-- Шапка симулятора -->
+  <div class="flex flex-col md:flex-row justify-between items-center border-b border-slate-800 pb-5 mb-5 gap-4">
+    <div>
+      <span class="text-[10px] font-bold tracking-[0.25em] text-emerald-400 uppercase">Управленческая экономика | Интерактивный дашборд</span>
+      <h1 class="text-xl md:text-2xl font-black text-white tracking-tight mt-1">Конструктор моделей спроса, предложения и эластичности</h1>
+      <p class="text-slate-400 text-xs mt-0.5">Внесите параметры вашего проекта и проанализируйте выручку компании на интерактивном графике</p>
+    </div>
+    
+    <!-- Интегрированный блок логотипа с авто-обнаружением и профессиональным резервным SVG-дизайном -->
+    <div class="flex items-center gap-3 shrink-0">
+      <div class="text-right hidden sm:block">
+        <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest block">Разработано для группы</span>
+        <span class="text-xs font-extrabold text-emerald-400">MBA-В26-МД</span>
+      </div>
+      <div class="h-14 w-auto flex items-center justify-center p-1 bg-white/5 border border-white/10 rounded-xl">
+        <!-- URL-кодированное имя файла для корректной локальной загрузки -->
+        <img id="logoImg" src="%D0%92%D0%A8%D0%91%20%D0%9B%D0%BE%D0%B3%D0%BE.png" alt="ВШБ AlmaU" class="h-11 w-auto object-contain" onerror="handleLogoError(this);">
+      </div>
+    </div>
+  </div>
+
+  <!-- Главная сетка: Левая колонка (Ввод параметров) / Правая (Анализ и Графики) -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    
+    <!-- ЛЕВАЯ ПАНЕЛЬ: Ввод данных (33% ширины) -->
+    <div class="lg:col-span-4 flex flex-col gap-4">
+      
+      <!-- Карточка 1: Базовое равновесие -->
+      <div class="bg-[#14181c] border border-slate-800 rounded-xl p-5 shadow-inner">
+        <h3 class="text-xs font-black text-emerald-400 tracking-wider uppercase mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
+          Шаг 1. Точка равновесия E<sub>0</sub>
+        </h3>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] text-slate-400 font-medium">Базовая цена P<sub>0</sub> (₸)</label>
+            <input type="number" id="inp-p0" value="500000" min="1" max="1000000">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] text-slate-400 font-medium">Базовый объем Q<sub>0</sub> (шт)</label>
+            <input type="number" id="inp-q0" value="500" min="1" max="1000">
+          </div>
+        </div>
+      </div>
+
+      <!-- Карточка 2: Границы рынка -->
+      <div class="bg-[#14181c] border border-slate-800 rounded-xl p-5 shadow-inner">
+        <h3 class="text-xs font-black text-sky-400 tracking-wider uppercase mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 bg-sky-400 rounded-full"></span>
+          Шаг 2. Ограничения рынка
+        </h3>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] text-slate-400 font-medium" title="Цена, при которой продажи упадут до нуля">Цена ухода P<sub>max</sub> (₸)</label>
+            <input type="number" id="inp-pmax" value="1000000" min="1" max="2000000">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] text-slate-400 font-medium" title="Минимальная цена начала предложения">Мин. цена P<sub>min</sub> (₸)</label>
+            <input type="number" id="inp-pmin" value="100000" min="0" max="1000000">
+          </div>
+        </div>
+        <p class="text-[10px] text-slate-500 mt-3 leading-relaxed">
+          *Для корректности расчетов соблюдайте условия: <br>
+          <span class="font-mono text-emerald-500">P<sub>max</sub> &gt; P<sub>0</sub> &gt; P<sub>min</sub> &ge; 0</span>.
+        </p>
+      </div>
+
+      <!-- Карточка 3: Интерактивное ценообразование -->
+      <div class="bg-[#14181c] border border-emerald-500/20 rounded-xl p-5 shadow-inner">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-xs font-black text-amber-400 tracking-wider uppercase">Шаг 3. Симуляция цены</h3>
+          <span id="price-badge" class="text-lg font-black text-emerald-400">500 000 ₸</span>
+        </div>
+        
+        <!-- Ползунок в винтажном стиле -->
+        <div class="py-2.5">
+          <input type="range" id="price-slider" min="0" max="1000000" value="500000" class="w-full vintage-slider">
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3 mt-4 text-[11px] text-slate-400">
+          <div class="bg-black/30 p-2.5 rounded-lg border border-slate-800">
+            <span class="block text-slate-500 uppercase text-[9px] mb-0.5">Текущие продажи</span>
+            <span id="stat-q" class="text-white font-bold text-sm">500 шт.</span>
+          </div>
+          <div class="bg-black/30 p-2.5 rounded-lg border border-slate-800">
+            <span class="block text-slate-500 uppercase text-[9px] mb-0.5">Выручка компании</span>
+            <span id="stat-tr" class="text-amber-400 font-bold text-sm font-mono">250 000 000 ₸</span>
+          </div>
+        </div>
+
+        <button id="toggleArea" class="w-full mt-3 py-2 px-3 bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all">
+          Скрыть зону выручки
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ПРАВАЯ ПАНЕЛЬ: Результаты и Графики (67% ширины) -->
+    <div class="lg:col-span-8 flex flex-col gap-4">
+      
+      <!-- Блок аналитики на лету -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        
+        <!-- Уравнение спроса -->
+        <div class="bg-[#14181c] border-l-4 border-emerald-500 p-4 rounded-r-xl">
+          <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Уравнение спроса</span>
+          <div id="eq-demand" class="text-xs md:text-sm font-mono font-bold text-slate-200 mt-1">Q<sub>d</sub> = a - b·P</div>
+          <span class="text-[9px] text-slate-500 block mt-1">Коэф. чувствительности b: <span id="eq-b-val" class="font-bold text-emerald-400">-</span></span>
+        </div>
+
+        <!-- Уравнение предложения -->
+        <div class="bg-[#14181c] border-l-4 border-rose-500 p-4 rounded-r-xl">
+          <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Уравнение предложения</span>
+          <div id="eq-supply" class="text-xs md:text-sm font-mono font-bold text-slate-200 mt-1">Q<sub>s</sub> = c + d·P</div>
+          <span class="text-[9px] text-slate-500 block mt-1">Коэф. чувствительности d: <span id="eq-d-val" class="font-bold text-rose-400">-</span></span>
+        </div>
+
+        <!-- Математический оптимум выручки -->
+        <div class="bg-[#14181c] border-l-4 border-amber-500 p-4 rounded-r-xl">
+          <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Оптимум цены (при |E<sub>d</sub>| = 1)</span>
+          <div id="eq-optimum" class="text-xs md:text-sm font-mono font-bold text-amber-400 mt-1">P<sub>opt</sub> = -</div>
+          <span class="text-[9px] text-slate-500 block mt-1">Пиковая выручка TR<sub>max</sub>: <span id="eq-max-tr" class="font-bold text-slate-300">-</span></span>
+        </div>
+
+      </div>
+
+      <!-- Графический холст в премиальном темном стиле -->
+      <div class="bg-[#14181c] border border-slate-800 shadow-xl rounded-xl p-4 relative overflow-hidden">
+        
+        <!-- Легенда графиков -->
+        <div class="flex flex-wrap gap-4 text-[10px] font-extrabold mb-3">
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 bg-emerald-500 rounded-full inline-block"></span>
+            <span class="text-slate-300">Спрос (Demand)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 bg-rose-500 rounded-full inline-block"></span>
+            <span class="text-slate-300">Предложение (Supply)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3.5 h-3.5 border-2 border-amber-400 rounded-full bg-[#14181c] inline-block"></span>
+            <span class="text-slate-300">Равновесие E<sub>0</sub></span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 bg-indigo-400 rounded-full inline-block"></span>
+            <span class="text-slate-300">Оптимальная выручка (Max TR<sub>max</sub>)</span>
+          </div>
+        </div>
+        
+        <!-- Полностью адаптивный HTML5 холст -->
+        <div class="w-full">
+          <canvas id="trackerCanvas" class="w-full h-auto block cursor-crosshair"></canvas>
+        </div>
+        <div class="text-[9px] text-slate-500 text-right mt-1">
+          *Вы можете перетаскивать цену курсором мыши или пальцем прямо на поле графика!
+        </div>
+      </div>
+
+      <!-- Панель динамического экономического вердикта -->
+      <div id="verdict-panel" class="bg-[#14181c] border-l-4 border-emerald-500 rounded-r-xl p-4 transition-all duration-300">
+        <h4 id="verdict-title" class="text-xs font-black tracking-wider uppercase mb-1 text-emerald-400">Анализ текущей рыночной ситуации</h4>
+        <p id="verdict-text" class="text-slate-300 text-xs leading-relaxed">
+          Проверка параметров и расчет бизнес-показателей...
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Подвал -->
+  <div class="text-center text-[10px] text-slate-600 border-t border-slate-800/60 mt-5 pt-3">
+    Интерактивный симулятор-конструктор для проведения лекций и практических работ | AlmaU GSB © 2026
+  </div>
+
+</div>
+
+<script>
+  // Захват элементов ввода данных
+  const inpP0 = document.getElementById('inp-p0');
+  const inpQ0 = document.getElementById('inp-q0');
+  const inpPmax = document.getElementById('inp-pmax');
+  const inpPmin = document.getElementById('inp-pmin');
+
+  // Управление
+  const priceSlider = document.getElementById('price-slider');
+  const priceBadge = document.getElementById('price-badge');
+  const toggleAreaBtn = document.getElementById('toggleArea');
+
+  // Результаты текстом
+  const eqDemand = document.getElementById('eq-demand');
+  const eqSupply = document.getElementById('eq-supply');
+  const eqOptimum = document.getElementById('eq-optimum');
+  const eqMaxTr = document.getElementById('eq-max-tr');
+  const eqBVal = document.getElementById('eq-b-val');
+  const eqDVal = document.getElementById('eq-d-val');
+
+  const statQ = document.getElementById('stat-q');
+  const statTr = document.getElementById('stat-tr');
+
+  // Вердикт
+  const verdictPanel = document.getElementById('verdict-panel');
+  const verdictTitle = document.getElementById('verdict-title');
+  const verdictText = document.getElementById('verdict-text');
+
+  // Настройка канваса
+  const canvas = document.getElementById('trackerCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  // Отступы увеличены для поддержки крупных чисел до 1 000 000
+  const pad = { top: 25, right: 40, bottom: 45, left: 110 };
+  
+  // Состояние отображения площади выручки
+  let showArea = true;
+  let isDraggingPrice = false;
+
+  // Функция авто-генерации резервного векторного логотипа (SVG) AlmaU Business School
+  function handleLogoError(imgElement) {
+    imgElement.outerHTML = `
+      <div class="flex items-center gap-2 px-2 py-0.5">
+        <svg class="w-8 h-8 text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z" fill="rgba(16, 185, 129, 0.2)" stroke="#10b981"/>
+          <path d="M2 17l10 5 10-5" stroke="#10b981"/>
+          <path d="M2 12l10 5 10-5" stroke="#10b981"/>
+        </svg>
+        <div class="flex flex-col text-left">
+          <span class="text-[11px] font-black tracking-wider text-white leading-none">ALMAU</span>
+          <span class="text-[7.5px] font-bold text-emerald-400 tracking-widest uppercase mt-0.5 leading-none">BUSINESS SCHOOL</span>
+        </div>
+      </div>
+    `;
+  }
+
+  // Форматирование валюты
+  function formatValue(val, suffix = ' ₸') {
+    return new Intl.NumberFormat('ru-RU').format(Math.round(val)) + suffix;
+  }
+
+  // Расчет математических коэффициентов модели спроса и предложения
+  function calculateModel() {
+    const P0 = parseFloat(inpP0.value) || 0;
+    const Q0 = parseFloat(inpQ0.value) || 0;
+    const Pmax = parseFloat(inpPmax.value) || 0;
+    const Pmin = parseFloat(inpPmin.value) || 0;
+
+    // Предохранитель от математических ошибок
+    if (Pmax <= P0) {
+      return { error: "Условие корректности нарушено: Цена ухода P<sub>max</sub> должна быть строго выше P<sub>0</sub>." };
+    }
+    if (Pmin >= P0) {
+      return { error: "Условие корректности нарушено: Минимальная цена P<sub>min</sub> должна быть строго ниже P<sub>0</sub>." };
+    }
+    if (P0 <= 0 || Q0 <= 0 || Pmax <= 0 || Pmin < 0) {
+      return { error: "Параметры должны быть положительными числами." };
+    }
+
+    // Спрос: Qd = a - b * P
+    const b = Q0 / (Pmax - P0);
+    const a = Q0 + b * P0;
+
+    // Предложение: Qs = c + d * P
+    const d = Q0 / (P0 - Pmin);
+    const c = Q0 - d * P0;
+
+    // Оптимум выручки: P_opt = a / (2 * b)
+    const P_opt = a / (2 * b);
+    const Q_opt = a - b * P_opt;
+    const TR_max = P_opt * Q_opt;
+
+    return { a, b, c, d, P_opt, Q_opt, TR_max, P0, Q0, Pmax, Pmin };
+  }
+
+  // Динамическая подстройка канваса
+  function resizeCanvas() {
+    const container = canvas.parentElement;
+    canvas.width = container.clientWidth;
+    canvas.height = Math.max(280, container.clientWidth * 0.45);
+    update();
+  }
+
+  // Получение цены из координаты Y на графике
+  function getPriceFromY(mouseY, maxValP, gH) {
+    let relativeY = (mouseY - pad.top) / gH;
+    let price = (1 - relativeY) * maxValP;
+    return Math.max(0, Math.round(price));
+  }
+
+  // Функция точной отрисовки букв с подстрочными индексами и значениями без наложений
+  function drawLabel(baseText, subText, valueText, x, y, color = '#94a3b8', font = '10px Inter', subFont = '8px Inter') {
+    ctx.fillStyle = color;
+    ctx.font = font;
+    ctx.fillText(baseText, x, y);
+    let currentX = x + ctx.measureText(baseText).width;
+    
+    if (subText) {
+      ctx.font = subFont;
+      ctx.fillText(subText, currentX, y + 3);
+      currentX += ctx.measureText(subText).width;
+    }
+    
+    if (valueText) {
+      ctx.font = font;
+      ctx.fillText(valueText, currentX, y);
+    }
+  }
+
+  // Главное обновление модели и расчеты
+  function update() {
+    const model = calculateModel();
+
+    if (model.error) {
+      verdictPanel.style.borderLeftColor = "#f43f5e";
+      verdictTitle.innerHTML = "Внимание: Ошибка калибровки модели";
+      verdictTitle.style.color = "#f43f5e";
+      verdictText.innerHTML = `<span class="text-rose-400 font-bold">${model.error}</span>`;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      return;
+    }
+
+    // Лимиты ползунка синхронизированы с Pmax
+    priceSlider.max = Math.round(model.Pmax * 1.15);
+    const P = Math.min(parseFloat(priceSlider.value), model.Pmax * 1.15);
+    priceBadge.innerText = formatValue(P);
+
+    // Расчеты текущих значений
+    const Qd = Math.max(0, model.a - model.b * P);
+    const Qs = Math.max(0, model.c + model.d * P);
+    const TR = P * Qd;
+    
+    // Эластичность
+    const Ed = Qd > 0 ? -(model.b * (P / Qd)) : -Infinity;
+
+    // Вывод формул и показателей
+    eqDemand.innerHTML = `Q<sub>d</sub> = ${Math.round(model.a)} - ${model.b.toFixed(6)}·P`;
+    eqSupply.innerHTML = `Q<sub>s</sub> = ${model.c >= 0 ? Math.round(model.c) : '- ' + Math.abs(Math.round(model.c))} + ${model.d.toFixed(6)}·P`;
+    eqBVal.innerText = model.b.toFixed(7);
+    eqDVal.innerText = model.d.toFixed(7);
+    eqOptimum.innerHTML = `P<sub>opt</sub> = ` + formatValue(model.P_opt);
+    eqMaxTr.innerText = formatValue(model.TR_max);
+
+    statQ.innerText = formatValue(Qd, ' шт.');
+    statTr.innerText = formatValue(TR);
+
+    // Оценка рынка и вывод бизнес-решения
+    if (Ed === -Infinity) {
+      verdictPanel.style.borderLeftColor = "#f43f5e";
+      verdictTitle.innerHTML = "Рынок мертв (Цена выше порога ухода потребителей)";
+      verdictTitle.style.color = "#f43f5e";
+      verdictText.innerHTML = `Установленная цена <strong>${formatValue(P)}</strong> превысила порог ухода покупателей. Объём продаж равен нулю. <br><strong>Управленческое решение:</strong> Срочно снижайте цену ниже уровня P<sub>max</sub> (<strong>${formatValue(model.Pmax)}</strong>).`;
+    } else if (Math.abs(Ed) > 1.05) {
+      verdictPanel.style.borderLeftColor = "#38bdf8";
+      verdictTitle.innerHTML = `Эластичный спрос (E<sub>d</sub> = ${Ed.toFixed(2)}) — Снижайте цену!`;
+      verdictTitle.style.color = "#38bdf8";
+      verdictText.innerHTML = `Потребители крайне чувствительны к цене. При снижении цены на 1%, продажи вырастут более чем на <strong>${Math.abs(Ed).toFixed(2)}%</strong>. <br><strong>Управленческое решение:</strong> Снижение цены в сторону оптимального ориентира P<sub>opt</sub> (<strong>${formatValue(model.P_opt)}</strong>) приведёт к росту вашей выручки.`;
+    } else if (Math.abs(Ed) < 0.95) {
+      verdictPanel.style.borderLeftColor = "#f43f5e";
+      verdictTitle.innerHTML = `Неэластичный спрос (E<sub>d</sub> = ${Ed.toFixed(2)}) — Смело повышайте цену!`;
+      verdictTitle.style.color = "#f43f5e";
+      verdictText.innerHTML = `Клиенты слабо реагируют на изменение цены. Повышение цены на 1% сократит продажи лишь на <strong>${Math.abs(Ed).toFixed(2)}%</strong>. <br><strong>Управленческое решение:</strong> Повышайте цену вверх к оптимальной отметке P<sub>opt</sub> (<strong>${formatValue(model.P_opt)}</strong>), чтобы поднять общую выручку без риска обрушить сбыт.`;
+    } else {
+      verdictPanel.style.borderLeftColor = "#10b981";
+      verdictTitle.innerHTML = `Единичная эластичность найдена! (E<sub>d</sub> = ${Ed.toFixed(2)})`;
+      verdictTitle.style.color = "#10b981";
+      verdictText.innerHTML = `Вы находитесь в точке абсолютного оптимума! Любое изменение цены сейчас снизит совокупную выручку. Достигнут абсолютный пик доходности в TR<sub>max</sub> (<strong>${formatValue(model.TR_max)}</strong>).`;
+    }
+
+    drawGraphics(P, Qd, Qs, TR, Ed, model);
+  }
+
+  // Отрисовка графических кривых на холсте HTML5 Canvas
+  function drawGraphics(P, Qd, Qs, TR, Ed, model) {
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const gW = w - pad.left - pad.right;
+    const gH = h - pad.top - pad.bottom;
+
+    // Определение масштаба шкал
+    const maxValQ = Math.max(model.a, model.Q0 * 2) * 1.05;
+    const maxValP = Math.max(model.Pmax, model.P_opt * 2) * 1.15;
+
+    // Масштабирование в координаты канваса
+    const getX = (q) => pad.left + (q / maxValQ) * gW;
+    const getY = (p) => pad.top + (1 - p / maxValP) * gH;
+
+    // 1. Отрисовка фоновой сетки
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 0.5;
+    for (let i = 1; i <= 5; i++) {
+      let q_grid = (maxValQ / 5) * i;
+      ctx.beginPath(); 
+      ctx.moveTo(getX(q_grid), pad.top); 
+      ctx.lineTo(getX(q_grid), h - pad.bottom); 
+      ctx.stroke();
+      
+      let p_grid = (maxValP / 5) * i;
+      ctx.beginPath(); 
+      ctx.moveTo(pad.left, getY(p_grid)); 
+      ctx.lineTo(w - pad.right, getY(p_grid)); 
+      ctx.stroke();
+    }
+
+    // 2. Оси X и Y
+    ctx.strokeStyle = '#475569';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top - 10);
+    ctx.lineTo(pad.left, h - pad.bottom);
+    ctx.lineTo(w - pad.right + 10, h - pad.bottom);
+    ctx.stroke();
+
+    // 3. Зона выручки TR
+    if (showArea && Qd > 0) {
+      let fillCol = 'rgba(16, 185, 129, 0.12)';
+      if (Math.abs(Ed) > 1.05) fillCol = 'rgba(56, 189, 248, 0.12)';
+      if (Math.abs(Ed) < 0.95) fillCol = 'rgba(244, 63, 94, 0.12)';
+      
+      ctx.fillStyle = fillCol;
+      ctx.fillRect(pad.left, getY(P), getX(Qd) - pad.left, h - pad.bottom - getY(P));
+      
+      ctx.strokeStyle = Math.abs(Ed) > 1.05 ? '#38bdf8' : (Math.abs(Ed) < 0.95 ? '#f43f5e' : '#10b981');
+      ctx.lineWidth = 1;
+      ctx.strokeRect(pad.left, getY(P), getX(Qd) - pad.left, h - pad.bottom - getY(P));
+    }
+
+    // 4. Отрисовка кривой Спроса (Demand) - Изумрудный светящийся график
+    ctx.strokeStyle = '#10b981';
+    ctx.lineWidth = 3.5;
+    ctx.shadowColor = 'rgba(16, 185, 129, 0.3)';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.moveTo(getX(model.a), getY(0));
+    ctx.lineTo(getX(0), getY(model.Pmax));
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // 5. Отрисовка кривой Предложения (Supply) - Алый график
+    ctx.strokeStyle = '#f43f5e';
+    ctx.lineWidth = 3.5;
+    ctx.shadowColor = 'rgba(244, 63, 94, 0.3)';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.moveTo(getX(0), getY(model.Pmin));
+    const pRight = maxValP;
+    const qRight = model.c + model.d * pRight;
+    ctx.lineTo(getX(qRight), getY(pRight));
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // 6. Трассировка текущей установленной цены (Золотистый пунктир)
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, getY(P));
+    ctx.lineTo(w - pad.right, getY(P));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Проекции точек на ось Q
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = 0.8;
+    ctx.setLineDash([2, 2]);
+    if (Qd > 0) {
+      ctx.beginPath(); ctx.moveTo(getX(Qd), getY(P)); ctx.lineTo(getX(Qd), h - pad.bottom); ctx.stroke();
+    }
+    if (Qs > 0 && getX(Qs) < w - pad.right) {
+      ctx.beginPath(); ctx.moveTo(getX(Qs), getY(P)); ctx.lineTo(getX(Qs), h - pad.bottom); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
+    // 7. Маркеры-точки
+    // Базовое равновесие E0 (Q0, P0)
+    ctx.fillStyle = '#1e293b';
+    ctx.strokeStyle = '#f59e0b';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(getX(model.Q0), getY(model.P0), 6, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+
+    // Текущий Спрос Qd
+    if (Qd > 0) {
+      ctx.fillStyle = '#10b981';
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(getX(Qd), getY(P), 6, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+    }
+
+    // Текущее Предложение Qs
+    if (Qs > 0 && getX(Qs) < w - pad.right) {
+      ctx.fillStyle = '#f43f5e';
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(getX(Qs), getY(P), 6, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+    }
+
+    // Оптимум цены Max TR (P_opt, Q_opt)
+    ctx.fillStyle = '#818cf8';
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(getX(model.Q_opt), getY(model.P_opt), 5.5, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+
+    // 8. Текстовые метки осей и графиков
+    drawLabel('Цена ', '(P)', pad.left - 100, pad.top - 12, '#cbd5e1', 'bold 10px Inter');
+    drawLabel('Объём ', '(Q)', w - pad.right - 60, h - pad.bottom + 30, '#cbd5e1', 'bold 10px Inter');
+
+    // Подписи значений осей (без underscores и $)
+    drawLabel('P', 'max', ' = ' + formatValue(model.Pmax), pad.left - 102, getY(model.Pmax) + 3, '#94a3b8', '10px monospace', '8px monospace');
+    drawLabel('P', '0', ' = ' + formatValue(model.P0), pad.left - 102, getY(model.P0) + 3, '#94a3b8', '10px monospace', '8px monospace');
+    drawLabel('P', 'min', ' = ' + formatValue(model.Pmin), pad.left - 102, getY(model.Pmin) + 3, '#94a3b8', '10px monospace', '8px monospace');
+
+    drawLabel('Q', '0', ' (' + Math.round(model.Q0) + ' шт)', getX(model.Q0) - 25, h - pad.bottom + 15, '#94a3b8', '10px Inter', '8px Inter');
+    drawLabel('a', '', ' (' + Math.round(model.a) + ' шт)', getX(model.a) - 20, h - pad.bottom + 15, '#94a3b8', '10px Inter', '8px Inter');
+
+    // Буквенные символы кривых
+    drawLabel('D', '', '', getX(model.a) + 6, getY(0) + 12, '#10b981', 'bold 12px Inter');
+    drawLabel('S', '', '', getX(qRight) - 12, getY(pRight) - 5, '#f43f5e', 'bold 12px Inter');
+
+    // Подписи равновесия и оптимума
+    drawLabel('E', '0', '', getX(model.Q0) + 8, getY(model.P0) - 5, '#f59e0b', 'bold 10px Inter', 'bold 8px Inter');
+    drawLabel('P', 'opt', '', getX(model.Q_opt) + 8, getY(model.P_opt) - 5, '#818cf8', 'bold 10px Inter', 'bold 8px Inter');
+
+    // Делаем шкалы глобально доступными для перетаскивания
+    window.lastMaxValP = maxValP;
+    window.lastGH = gH;
+  }
+
+  // 9. Обработка Drag-and-Drop прямо на графическом поле
+  function getMousePos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+    return {
+      x: (clientX - rect.left) * (canvas.width / rect.width),
+      y: (clientY - rect.top) * (canvas.height / rect.height)
+    };
+  }
+
+  canvas.addEventListener('mousedown', function(e) {
+    const pos = getMousePos(e);
+    if (pos.x >= pad.left && pos.x <= canvas.width - pad.right) {
+      isDraggingPrice = true;
+    }
+  });
+
+  window.addEventListener('mousemove', function(e) {
+    if (!isDraggingPrice) return;
+    const pos = getMousePos(e);
+    const calculatedPrice = getPriceFromY(pos.y, window.lastMaxValP, window.lastGH);
+    priceSlider.value = calculatedPrice;
+    update();
+  });
+
+  window.addEventListener('mouseup', function() {
+    isDraggingPrice = false;
+  });
+
+  // Сенсорное управление для экранов планшетов и смартфонов
+  canvas.addEventListener('touchstart', function(e) {
+    const pos = getMousePos(e);
+    if (pos.x >= pad.left && pos.x <= canvas.width - pad.right) {
+      isDraggingPrice = true;
+    }
+  });
+
+  canvas.addEventListener('touchmove', function(e) {
+    if (!isDraggingPrice) return;
+    e.preventDefault(); // отмена прокрутки пальцем во время симуляции
+    const pos = getMousePos(e);
+    const calculatedPrice = getPriceFromY(pos.y, window.lastMaxValP, window.lastGH);
+    priceSlider.value = calculatedPrice;
+    update();
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', function() {
+    isDraggingPrice = false;
+  });
+
+  // Привязка слушателей ввода к полям
+  [inpP0, inpQ0, inpPmax, inpPmin, priceSlider].forEach(el => {
+    el.addEventListener('input', update);
+  });
+
+  // Обработка кнопки Скрыть/Показать зону выручки
+  toggleAreaBtn.addEventListener('click', function() {
+    showArea = !showArea;
+    this.innerText = showArea ? "Скрыть зону выручки" : "Показать зону выручки";
+    this.classList.toggle('bg-emerald-950/60');
+    this.classList.toggle('bg-slate-800');
+    update();
+  });
+
+  // Первоначальный запуск симулятора
+  window.addEventListener('load', resizeCanvas);
+  window.addEventListener('resize', resizeCanvas);
+</script>
+
+</body>
+</html>

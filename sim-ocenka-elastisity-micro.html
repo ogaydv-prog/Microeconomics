@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Анализ эластичности — Симулятор</title>
+<style>
+  :root {
+    --bg-dark: #121518;       /* Ультратемный глубокий фон */
+    --panel-dark: #1a1f24;    /* Графитовый фон блоков */
+    --border-gray: #2d3748;   /* Строгие границы */
+    
+    --neon-blue: #00e5ff;     /* Неоновый спрос */
+    --neon-green: #00e676;    /* Единичная эластичность / Максимум выручки */
+    --neon-purple: #d500f9;   /* Неэластичная зона */
+    --neon-amber: #ffea00;    /* Эластичная зона */
+    
+    --text-main: #ffffff;
+    --text-muted: #a0aec0;
+  }
+
+  body {
+    font-family: 'Arial', 'Helvetica', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .dashboard-container {
+    width: 100%;
+    max-width: 1200px;
+    background: var(--panel-dark);
+    border: 1px solid rgba(0, 230, 118, 0.25); /* Аккуратный неоновый контур всего симулятора */
+    box-shadow: 0 0 25px rgba(0, 230, 118, 0.1);
+    border-radius: 8px;
+    padding: 30px;
+    box-sizing: border-box;
+  }
+
+  /* ТЁМНЫЙ ВЕРХНИЙ БЛОК С НЕОНОВОЙ ПОДСВЕТКОЙ */
+  .neon-header {
+    background-color: #0d1114;
+    padding: 20px;
+    border-radius: 6px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.15); 
+    border: 1px solid rgba(0, 229, 255, 0.25);
+    margin-bottom: 30px;
+  }
+
+  .neon-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    letter-spacing: 0.5px;
+    color: var(--text-main);
+  }
+
+  .neon-header .group-info {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* Основная сетка */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+  }
+
+  @media (max-width: 950px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ЛЕВАЯ ПАНЕЛЬ С УПРАВЛЕНИЕМ */
+  .control-panel {
+    background-color: #161b1f;
+    border: 1px solid var(--border-gray);
+    border-radius: 6px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .block-title {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-main);
+    border-bottom: 2px solid var(--border-gray);
+    padding-bottom: 8px;
+    margin-bottom: 25px;
+    letter-spacing: 0.5px;
+  }
+
+  .slider-group {
+    margin-bottom: 30px;
+  }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .slider-labels span:last-child {
+    font-weight: 700;
+    color: var(--neon-blue);
+    font-size: 18px;
+    text-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+  }
+
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--neon-blue);
+    cursor: pointer;
+    background: #2d3748;
+    height: 6px;
+    border-radius: 3px;
+  }
+
+  /* Терминальные метрики */
+  .terminal-metrics {
+    background: #0d1114;
+    border: 1px solid var(--border-gray);
+    border-radius: 6px;
+    padding: 18px;
+    margin-top: auto;
+  }
+
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 10px 0;
+    border-bottom: 1px solid #232931;
+    color: var(--text-muted);
+  }
+
+  .metric-row:last-child { border-bottom: none; }
+  .metric-row span:last-child { 
+    font-weight: 700; 
+    color: var(--text-main);
+  }
+
+  /* ПРАВАЯ ПАНЕЛЬ С УВЕЛИЧЕННЫМИ ГРАФИКАМИ */
+  .charts-panel {
+    background: #161b1f;
+    border: 1px solid var(--border-gray);
+    border-radius: 6px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+    background: #0d1114;
+    border: 1px solid var(--border-gray);
+    border-radius: 4px;
+    padding: 10px;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* ЭЛЕГАНТНЫЙ ЖУРНАЛЬНЫЙ БЛОК ВЫВОДОВ СНИЗУ */
+  .insights-box {
+    border-radius: 6px;
+    padding: 25px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid var(--border-gray);
+    background-color: #161b1f;
+  }
+
+  .insights-box.elastic-mode {
+    border-left: 6px solid var(--neon-amber);
+    box-shadow: 0 0 15px rgba(255, 234, 0, 0.05);
+  }
+
+  .insights-box.inelastic-mode {
+    border-left: 6px solid var(--neon-purple);
+    box-shadow: 0 0 15px rgba(213, 0, 249, 0.05);
+  }
+
+  .insights-box.unit-mode {
+    border-left: 6px solid var(--neon-green);
+    box-shadow: 0 0 15px rgba(0, 230, 118, 0.05);
+  }
+
+  .insights-title {
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .insights-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #e2e8f0;
+  }
+
+  /* Фирменный строгий подвал */
+  .footer-signature {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-gray);
+    padding-top: 20px;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="dashboard-container">
+  
+  <!-- Тёмная шапка в стиле Neon Gray -->
+  <div class="neon-header">
+    <h1>Анализ эластичности</h1>
+    <div class="group-info">Микроэкономика | БАиЭ, осенний семестр 2026</div>
+  </div>
+
+  <!-- Главный макет -->
+  <div class="main-grid">
+    
+    <!-- Панель управления -->
+    <div class="control-panel">
+      <div class="block-title">Ввод данных рыночной цены</div>
+      
+      <div class="slider-group">
+        <div class="slider-labels"><span>Установить цену (P):</span><span id="txt-price">20 $</span></div>
+        <input type="range" id="input-price" min="0" max="40" step="1" value="20">
+      </div>
+
+      <div class="terminal-metrics">
+        <div class="block-title" style="font-size:11px; margin-bottom:12px; color: var(--text-muted);">Текущее состояние системы:</div>
+        <div class="metric-row"><span>Линейная функция спроса:</span><span style="color:var(--neon-blue);">Q<sup>d</sup> = 80 - 2P</span></div>
+        <div class="metric-row"><span>Объем спроса на рынке (Q):</span><span id="m-quantity" style="color: #fff;">40 ед.</span></div>
+        <div class="metric-row"><span>Коэффициент эластичности (E<sub>d</sub>):</span><span id="m-elasticity" style="font-weight:bold;">-1.00</span></div>
+        <div class="metric-row"><span>Валовая выручка фирмы (TR):</span><span id="m-revenue" style="color: var(--neon-green); font-weight:bold;">800 $</span></div>
+      </div>
+    </div>
+
+    <!-- Панель увеличенных графиков из источника -->
+    <div class="charts-panel">
+      <!-- Верхний холст: Кривая спроса и площади прямоугольников выручки -->
+      <div class="canvas-wrapper">
+        <canvas id="demandCanvas" width="650" height="260"></canvas>
+      </div>
+      <!-- Нижний холст: Парабола валовой выручки -->
+      <div class="canvas-wrapper">
+        <canvas id="revenueCanvas" width="650" height="200"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Динамический блок выводов -->
+  <div id="insights-container" class="insights-box unit-mode">
+    <div id="insights-title" class="insights-title" style="color: var(--neon-green);">Тест по показателям общей выручки</div>
+    <div id="insights-text" class="insights-text">Анализ рынка завершен...</div>
+  </div>
+
+  <!-- Подвал -->
+  <div class="footer-signature">
+    Школа Цифровых Технологий и Экономики | AlmaU 2026
+  </div>
+
+</div>
+
+<script>
+  const priceSlider = document.getElementById('input-price');
+  const dCanvas = document.getElementById('demandCanvas');
+  const rCanvas = document.getElementById('revenueCanvas');
+  const dCtx = dCanvas.getContext('2d');
+  const rCtx = rCanvas.getContext('2d');
+
+  // Увеличенные отступы для исключения наложения шрифтов
+  const pad = { top: 25, right: 40, bottom: 40, left: 60 };
+
+  function drawDemandChart(P) {
+    const w = dCanvas.width;
+    const h = dCanvas.height;
+    dCtx.clearRect(0, 0, w, h);
+
+    const gW = w - pad.left - pad.right;
+    const gH = h - pad.top - pad.bottom;
+
+    const getX = (q) => pad.left + (q / 80) * gW;
+    const getY = (p) => pad.top + (1 - p / 40) * gH;
+
+    const currentQ = 80 - 2 * P;
+
+    // 1. Отрисовка ГЕОМЕТРИЧЕСКОЙ ЗОНЫ ВЫРУЧКИ (P * Q) как в учебнике
+    if (P > 0 && currentQ > 0) {
+      let zoneColor = 'rgba(0, 230, 118, 0.08)'; // по умолчанию зеленая (единичная)
+      if (P > 20) zoneColor = 'rgba(255, 234, 0, 0.08)'; // желтая (эластичная)
+      if (P < 20) zoneColor = 'rgba(213, 0, 249, 0.08)'; // фиолетовая (неэластичная)
+      
+      dCtx.fillStyle = zoneColor;
+      dCtx.fillRect(pad.left, getY(P), currentQ / 80 * gW, (P / 40) * gH);
+    }
+
+    // 2. Сетка и Оси
+    dCtx.strokeStyle = '#2d3748';
+    dCtx.lineWidth = 1;
+    // Тонкие внутренние линии-ориентиры
+    dCtx.beginPath();
+    dCtx.moveTo(getX(40), pad.top); dCtx.lineTo(getX(40), h - pad.bottom);
+    dCtx.moveTo(pad.left, getY(20)); dCtx.lineTo(w - pad.right, getY(20));
+    dCtx.stroke();
+
+    // Главные оси
+    dCtx.strokeStyle = '#4a5568';
+    dCtx.lineWidth = 2;
+    dCtx.beginPath();
+    dCtx.moveTo(pad.left, pad.top - 10); dCtx.lineTo(pad.left, h - pad.bottom);
+    dCtx.lineTo(w - pad.right + 10, h - pad.bottom);
+    dCtx.stroke();
+
+    // 3. Линия линейного спроса (Яркий неоновый штрих)
+    dCtx.strokeStyle = varColor(P);
+    dCtx.lineWidth = 3.5;
+    dCtx.beginPath();
+    dCtx.moveTo(getX(0), getY(40));
+    dCtx.lineTo(getX(80), getY(0));
+    dCtx.stroke();
+
+    // 4. Трассировка текущего состояния (Связующие проекции)
+    dCtx.strokeStyle = '#718096';
+    dCtx.lineWidth = 1.5;
+    dCtx.setLineDash([5, 5]);
+    
+    // К оси цен
+    dCtx.beginPath(); dCtx.moveTo(getX(currentQ), getY(P)); dCtx.lineTo(pad.left, getY(P)); dCtx.stroke();
+    // К оси объемов
+    dCtx.beginPath(); dCtx.moveTo(getX(currentQ), getY(P)); dCtx.lineTo(getX(currentQ), h - pad.bottom); dCtx.stroke();
+    dCtx.setLineDash([]);
+
+    // 5. Маркеры критических точек
+    // Центральная точка E (Ed = -1)
+    dCtx.fillStyle = '#00e676';
+    dCtx.beginPath(); dCtx.arc(getX(40), getY(20), 4, 0, 2 * Math.PI); dCtx.fill();
+
+    // Текущий рыночный выбор
+    dCtx.fillStyle = varColor(P);
+    dCtx.shadowColor = varColor(P);
+    dCtx.shadowBlur = 10; // Эффект дорогого свечения точки
+    dCtx.beginPath(); dCtx.arc(getX(currentQ), getY(P), 6, 0, 2 * Math.PI); dCtx.fill();
+    dCtx.shadowBlur = 0; // сброс свечения для текста
+
+    // 6. Подписи и калибровка шкал (Четко разнесены во избежание наложений)
+    dCtx.fillStyle = '#ffffff';
+    dCtx.font = 'bold 12px Arial';
+    dCtx.fillText('Цена (P, $)', pad.left - 50, pad.top - 15);
+    dCtx.fillText('Количество (Q, ед.)', w - pad.right - 80, h - pad.bottom + 30);
+    
+    dCtx.fillStyle = varColor(P);
+    dCtx.fillText(`Точка выбора (P=${P}, Q=${currentQ})`, getX(currentQ) + 12, getY(P) - 12);
+    
+    // Статичные маркеры осей
+    dCtx.fillStyle = '#718096';
+    dCtx.fillText('40', pad.left - 22, getY(40) + 4);
+    dCtx.fillText('20', pad.left - 22, getY(20) + 4);
+    dCtx.fillText('80', getX(80) - 8, h - pad.bottom + 18);
+    dCtx.fillText('40', getX(40) - 8, h - pad.bottom + 18);
+
+    // Динамические маркеры, следующие за ползунком
+    dCtx.fillStyle = '#ffffff';
+    if (Math.abs(getY(P) - getY(20)) > 14 && Math.abs(P - 40) > 3 && P > 0) {
+      dCtx.fillText(P + '$', pad.left - 30, getY(P) + 4);
+    }
+    if (Math.abs(getX(currentQ) - getX(40)) > 20 && currentQ > 0 && currentQ < 80) {
+      dCtx.fillText(currentQ, getX(currentQ) - 10, h - pad.bottom + 18);
+    }
+  }
+
+  function drawRevenueChart(P) {
+    const w = rCanvas.width;
+    const h = rCanvas.height;
+    rCtx.clearRect(0, 0, w, h);
+
+    const gW = w - pad.left - pad.right;
+    const gH = h - pad.top - pad.bottom;
+
+    const getX = (q) => pad.left + (q / 80) * gW;
+    const getY = (tr) => pad.top + (1 - tr / 800) * gH;
+
+    const currentQ = 80 - 2 * P;
+    const currentTR = P * currentQ;
+
+    // Сетка параболы
+    rCtx.strokeStyle = '#2d3748';
+    rCtx.lineWidth = 1;
+    rCtx.beginPath();
+    rCtx.moveTo(getX(40), pad.top); rCtx.lineTo(getX(40), h - pad.bottom);
+    rCtx.stroke();
+
+    // Оси
+    rCtx.strokeStyle = '#4a5568';
+    rCtx.lineWidth = 2;
+    rCtx.beginPath();
+    rCtx.moveTo(pad.left, pad.top - 10); rCtx.lineTo(pad.left, h - pad.bottom);
+    rCtx.lineTo(w - pad.right + 10, h - pad.bottom);
+    rCtx.stroke();
+
+    // Парабола TR
+    rCtx.strokeStyle = '#718096';
+    rCtx.lineWidth = 2.5;
+    rCtx.beginPath();
+    for (let q = 0; q <= 80; q += 1) {
+      let p_val = (80 - q) / 2;
+      let tr_val = p_val * q;
+      if (q === 0) rCtx.moveTo(getX(q), getY(tr_val));
+      else rCtx.lineTo(getX(q), getY(tr_val));
+    }
+    rCtx.stroke();
+
+    // Проекция
+    rCtx.strokeStyle = '#718096';
+    rCtx.lineWidth = 1.5;
+    rCtx.setLineDash([5, 5]);
+    rCtx.beginPath(); rCtx.moveTo(getX(currentQ), getY(currentTR)); rCtx.lineTo(pad.left, getY(currentTR)); rCtx.stroke();
+    rCtx.beginPath(); rCtx.moveTo(getX(currentQ), getY(currentTR)); rCtx.lineTo(getX(currentQ), h - pad.bottom); rCtx.stroke();
+    rCtx.setLineDash([]);
+
+    // Вершина параболы (Максимум)
+    rCtx.fillStyle = '#00e676';
+    rCtx.beginPath(); rCtx.arc(getX(40), getY(800), 4, 0, 2 * Math.PI); rCtx.fill();
+
+    // Текущее состояние
+    rCtx.fillStyle = varColor(P);
+    rCtx.shadowColor = varColor(P);
+    rCtx.shadowBlur = 10;
+    rCtx.beginPath(); rCtx.arc(getX(currentQ), getY(currentTR), 6, 0, 2 * Math.PI); rCtx.fill();
+    rCtx.shadowBlur = 0;
+
+    // Текстовое сопровождение
+    rCtx.fillStyle = '#ffffff';
+    rCtx.font = 'bold 12px Arial';
+    rCtx.fillText('Выручка (TR, $)', pad.left - 50, pad.top - 15);
+    rCtx.fillText('Количество (Q, ед.)', w - pad.right - 80, h - pad.bottom + 30);
+
+    rCtx.fillStyle = '#718096';
+    rCtx.fillText('800$', pad.left - 42, getY(800) + 4);
+    rCtx.fillText('40', getX(40) - 8, h - pad.bottom + 18);
+
+    rCtx.fillStyle = '#ffffff';
+    if (Math.abs(currentTR - 800) > 45 && currentTR > 0) {
+      rCtx.fillText(currentTR + '$', pad.left - 42, getY(currentTR) + 4);
+    }
+  }
+
+  // Вспомогательная функция динамического переключения цветов интерфейса
+  function varColor(p) {
+    if (p === 20) return 'var(--neon-green)';
+    return p > 20 ? 'var(--neon-amber)' : 'var(--neon-purple)';
+  }
+
+  function sync() {
+    const P = parseInt(priceSlider.value);
+    const Q = 80 - 2 * P;
+    const TR = P * Q;
+    
+    let Ed = Q > 0 ? -2 * (P / Q) : -Infinity;
+
+    // Синхронизация текстов левой экспресс-панели
+    document.getElementById('txt-price').innerText = P + ' $';
+    document.getElementById('m-quantity').innerText = Q + ' ед.';
+    document.getElementById('m-revenue').innerText = TR + ' $';
+    document.getElementById('m-elasticity').innerText = Ed === -Infinity ? '-\u221E' : Ed.toFixed(2);
+    document.getElementById('m-elasticity').style.color = varColor(P);
+
+    // Перерисовка графических полей
+    drawDemandChart(P);
+    drawRevenueChart(P);
+
+    // Логика динамических выводов на основе теста общей выручки
+    const box = document.getElementById('insights-container');
+    const title = document.getElementById('insights-title');
+    const text = document.getElementById('insights-text');
+
+    box.className = 'insights-box ';
+
+    if (P === 20) {
+      box.classList.add('unit-mode');
+      title.style.color = 'var(--neon-green)';
+      title.innerText = 'Единичная эластичность (|Ed| = 1.00) — Экстремум функции';
+      text.innerHTML = '<strong>Управленческий инсайт:</strong> Валовая выручка фирмы находится в точке глобального максимума и составляет <strong>800 $</strong>. Эластичность равна -1.00[cite: 1]. Изменение цены в любую сторону приведет к экономическим потерям[cite: 1].';
+    } else if (P > 20) {
+      box.classList.add('elastic-mode');
+      title.style.color = 'var(--neon-amber)';
+      title.innerText = `Эластичный спрос (|Ed| > 1) — Рыночное решение`;
+      text.innerHTML = '<strong>Управленческий инсайт:</strong> Процентное падение величины спроса превышает процентный рост цены[cite: 1]. Фирма находится на верхнем отрезке параболы выручки[cite: 1]. Повышение цены уничтожает объем продаж, снижая TR[cite: 1]. <strong>Рекомендация:</strong> Снижать цену для максимизации дохода[cite: 1].';
+    } else {
+      box.classList.add('inelastic-mode');
+      title.style.color = 'var(--neon-purple)';
+      title.innerText = `Неэластичный спрос (|Ed| < 1) — Рыночное решение`;
+      text.innerHTML = '<strong>Управленческий инсайт:</strong> Потребители слабо реагируют на ценовые сдвиги, объем падает медленнее, чем растет цена[cite: 1]. Фирма находится на нижнем отрезке кривой[cite: 1]. Снижение цены приносит убытки[cite: 1]. <strong>Рекомендация:</strong> Фирма имеет рыночную силу для повышения цены с целью роста выручки[cite: 1].';
+    }
+  }
+
+  priceSlider.addEventListener('input', sync);
+  sync(); // Первичный рендеринг при инициализации страницы
+</script>
+
+</body>
+</html>

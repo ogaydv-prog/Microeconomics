@@ -2,7 +2,9 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
+  /* Полный сброс отступов и скроллбаров для идеальной посадки во фрейм */
   body {
     margin: 0;
     padding: 0;
@@ -13,21 +15,35 @@
     align-items: center;
     height: 100vh;
   }
-  .interactive-tile {
-    display: inline-block;
+  
+  /* Фирменная пружинящая кнопка */
+  .main-tile-btn {
+    background: none;
+    border: none;
+    padding: 0;
     cursor: pointer;
+    display: inline-block;
     transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.25s ease;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    width: 100%;
+    max-width: 250px;
+    height: auto;
   }
-  .interactive-tile:hover {
+  
+  /* Эффект плавного увеличения и мягкого голубого свечения при наведении */
+  .main-tile-btn:hover {
     transform: scale(1.05);
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)) drop-shadow(0 0 8px rgba(33, 150, 243, 0.4));
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)) drop-shadow(0 0 12px rgba(56, 189, 248, 0.65));
   }
-  .interactive-tile:active {
+  
+  /* Эффект физического клика */
+  .main-tile-btn:active {
     transform: scale(0.98);
   }
+  
   .tile-img {
     width: 100%;
-    max-width: 220px;
     height: auto;
     display: block;
     border-radius: 12px;
@@ -35,8 +51,19 @@
 </style>
 </head>
 <body>
-  <a href="https://ogaydv-prog.github.io/Microeconomics/sim-ppf-micro.html" target="_blank" class="interactive-tile">
-    <img src="pic-ppf.png" class="tile-img" alt="Модель PPF">
+
+  <!-- Относительная ссылка! Она автоматически откроет новый симулятор из этого же репозитория Microeconomics -->
+  <a href="sim-ppf-micro.html" target="_blank" class="main-tile-btn">
+    
+    <!-- Картинка кнопки pic-ppf.png из нового репозитория с двойной подстраховкой -->
+    <img src="pic-ppf.png" 
+         class="tile-img" 
+         alt="Запустить симулятор ППВ" 
+         draggable="false" 
+         onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/ogaydv-prog/Microeconomics/master/pic-ppf.png';">
+         
   </a>
+
 </body>
+</html>
 </html>

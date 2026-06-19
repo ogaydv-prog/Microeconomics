@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  /* Идеальная посадка кнопки во фрейме без отступов и скроллбаров */
+  /* Полный сброс отступов и скроллбаров для идеальной посадки на Google Сайте */
   body {
     margin: 0;
     padding: 0;
@@ -16,34 +16,32 @@
     height: 100vh;
   }
   
-  /* Эластичная интерактивная кнопка-плитка */
+  /* Наша фирменная пружинящая кнопка */
   .main-tile-btn {
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
     display: inline-block;
-    /* Плавная пружинящая анимация */
     transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.25s ease;
     outline: none;
     -webkit-tap-highlight-color: transparent;
     width: 100%;
-    max-width: 250px; /* Стандартный размер плитки для сохранения пропорций */
+    max-width: 250px; /* Идеальный размер плитки, совпадающий со всеми остальными */
     height: auto;
   }
   
-  /* Эффект "оживления": легкое увеличение и мягкое неоновое свечение при наведении */
+  /* Эффект плавного увеличения и мягкого голубого свечения эластичности при наведении */
   .main-tile-btn:hover {
     transform: scale(1.05);
     filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)) drop-shadow(0 0 12px rgba(56, 189, 248, 0.65));
   }
   
-  /* Эффект физического нажатия */
+  /* Эффект физического клика */
   .main-tile-btn:active {
     transform: scale(0.98);
   }
   
-  /* Отображение картинки без рамок, искажений и строго по границам исходного файла */
   .tile-img {
     width: 100%;
     height: auto;
@@ -54,10 +52,14 @@
 </head>
 <body>
 
-  <!-- При клике открывается учебник в новом окне -->
-  <a href="https://raw.githubusercontent.com/ogaydv-prog/Microeconomics/main/%D0%9E%D0%B3%D0%B0%D0%B9%20%D0%9C%D0%B8%D0%BA%D1%80%D0%BE%D1%8D%D0%BA%D0%BE%D0%BD%D0%BE%D0%BC%D0%B8%D0%BA%D0%B0.pdf" target="_blank" class="main-tile-btn">
-    <!-- Подгрузка изображения кнопки напрямую из репозитория Microeconomics -->
-    <img src="https://raw.githubusercontent.com/ogaydv-prog/Microeconomics/main/pic-micro.png" class="tile-img" alt="Открыть: Огай Микроэкономика" draggable="false">
+  <!-- При нажатии на кнопку открывается файл силлабуса в новом окне -->
+  <a href="https://raw.githubusercontent.com/ogaydv-prog/Microeconomics/master/sillabus-micro.pdf" target="_blank" class="main-tile-btn">
+    <!-- Изображение кнопки pic-micro.png из репозитория Microeconomics -->
+    <img src="https://raw.githubusercontent.com/ogaydv-prog/Microeconomics/master/pic-micro.png" 
+         class="tile-img" 
+         alt="Перейти к силлабусу по микроэкономике" 
+         draggable="false" 
+         onerror="this.src='https://placehold.co/250x250/0f172a/38bdf8?text=Силлабус'">
   </a>
 
 </body>

@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
+  /* Полный сброс отступов и скроллбаров для идеальной посадки во фрейм */
   body {
     margin: 0;
     padding: 0;
@@ -13,10 +14,9 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    width: 100vw;
   }
   
-  /* Наша фирменная пружинящая кнопка - теперь полностью отзывчивая */
+  /* Фирменная пружинящая кнопка */
   .main-tile-btn {
     background: none;
     border: none;
@@ -26,23 +26,25 @@
     transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.25s ease;
     outline: none;
     -webkit-tap-highlight-color: transparent;
-    max-width: 100%;
+    width: 100%;
+    max-width: 250px;
+    height: auto;
   }
   
-  /* Эффект увеличения и мягкой изумрудной неоновой подсветки при наведении */
+  /* Эффект плавного увеличения и мягкого голубого свечения при наведении */
   .main-tile-btn:hover {
     transform: scale(1.05);
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)) drop-shadow(0 0 12px rgba(16, 185, 129, 0.6));
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)) drop-shadow(0 0 12px rgba(56, 189, 248, 0.65));
   }
+  
+  /* Эффект физического клика */
   .main-tile-btn:active {
     transform: scale(0.98);
   }
   
-  /* Точные параметры отзывчивости как у кнопки Лекции и Спроса/Предложения */
   .tile-img {
     width: 100%;
-    max-width: 250px; /* Ограничиваем максимальный размер, совпадающий с остальными кнопками */
-    height: auto; /* Высота подстраивается автоматически, исключая искажения */
+    height: auto;
     display: block;
     border-radius: 12px;
   }
@@ -50,16 +52,18 @@
 </head>
 <body>
 
-  <button id="btn-ec-ac-costs" class="main-tile-btn">
-    <img src="pic-ec-ac-costs.png" class="tile-img" alt="Переход к симулятору: Экономические и бухгалтерские издержки">
-  </button>
-
-<script>
-  document.getElementById("btn-ec-ac-costs").addEventListener("click", function() {
-    // Надежный переход на симулятор из фрейма Google Сайтов
-    window.open("https://ogaydv-prog.github.io/Simulator-NPV/sim-ec-ac-costs.html", "_blank");
-  });
-</script>
+  <!-- Кнопка ведет на симулятор издержек в том же репозитории -->
+  <a href="sim-ec-ac-costs-micro.html" target="_blank" class="main-tile-btn">
+    
+    <!-- Используем картинку pic-ec-ac-costs-micro.png с подстраховкой на прямой путь -->
+    <img src="pic-ec-ac-costs-micro.png" 
+         class="tile-img" 
+         alt="Запустить симулятор издержек" 
+         draggable="false" 
+         onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/ogaydv-prog/Microeconomics/master/pic-ec-ac-costs-micro.png';">
+         
+  </a>
 
 </body>
+</html>
 </html>

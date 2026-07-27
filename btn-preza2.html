@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Интерактивная кнопка Презентация 2</title>
 <style>
   body {
     margin: 0;
@@ -16,7 +15,7 @@
     height: 100vh;
   }
   
-  /* Фирменная пружинящая кнопка, унифицированная со всеми плитками */
+  /* Фирменная пружинящая кнопка (полностью идентична коду лекции и симулятора) */
   .main-tile-btn {
     background: none;
     border: none;
@@ -40,7 +39,7 @@
   
   .tile-img {
     width: 100%;
-    max-width: 250px; /* Единый стандарт ширины для всех кнопок */
+    max-width: 250px; /* Строго фиксированный идеальный размер плитки */
     height: auto;
     display: block;
     border-radius: 12px;
@@ -49,8 +48,8 @@
 </head>
 <body>
 
+  <!-- Кнопка презентации, приведенная к единому стандарту с лекциями и симуляторами -->
   <button id="btn-preza2" class="main-tile-btn">
-    <!-- Картинка-иконка презентации с защитным onerror на ваш репозиторий Microeconomics -->
     <img src="pic-preza2.png" 
          class="tile-img" 
          alt="Презентация: Рыночные силы спроса и предложения"
@@ -60,7 +59,7 @@
 
 <script>
   document.getElementById("btn-preza2").addEventListener("click", function() {
-    // Ссылка на объединенную презентацию на Google Диске
+    // Открытие презентации на Google Диске в новой вкладке
     window.open("https://docs.google.com/presentation/d/1-2vzCqDckBRuLeQu-UzxMeL_di_PC7Zc/edit?usp=drive_link&ouid=109725301150629205728&rtpof=true&sd=true", "_blank");
   });
 </script>

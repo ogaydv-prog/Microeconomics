@@ -17,6 +17,8 @@
     display: inline-block;
     cursor: pointer;
     transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.25s ease;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
   }
   .interactive-tile:hover {
     transform: scale(1.05);
@@ -35,8 +37,16 @@
 </style>
 </head>
 <body>
+  <!-- Ссылка ведет строго на симулятор в репозитории Microeconomics -->
   <a href="https://ogaydv-prog.github.io/Microeconomics/sim-model-circular-flow.html" target="_blank" class="interactive-tile">
-    <img src="pic-circular-flow.png" class="tile-img" alt="Модель кругооборота">
+    
+    <!-- ИСПРАВЛЕНО: Добавлена onerror-подстраховка, которая подгрузит картинку из правильного репозитория при любых сбоях -->
+    <img src="pic-circular-flow.png" 
+         class="tile-img" 
+         alt="Модель кругооборота"
+         draggable="false"
+         onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/ogaydv-prog/Microeconomics/master/pic-circular-flow.png';">
+         
   </a>
 </body>
 </html>

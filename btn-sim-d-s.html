@@ -44,15 +44,19 @@
 </head>
 <body>
 
-  <!-- Кнопка со ссылкой на изображение из вашего репозитория GitHub -->
+  <!-- Кнопка со ссылкой на симулятор строго из репозитория Microeconomics -->
   <button id="btn-sim-ds" class="main-tile-btn">
-    <img src="pic-sim-d-s.png" class="tile-img" alt="Симулятор: Анализ спроса и предложения">
+    <img src="pic-sim-d-s.png" 
+         class="tile-img" 
+         alt="Симулятор: Анализ спроса и предложения"
+         draggable="false"
+         onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/ogaydv-prog/Microeconomics/master/pic-sim-d-s.png';">
   </button>
 
 <script>
   document.getElementById("btn-sim-ds").addEventListener("click", function() {
-    // Открытие симулятора спроса и предложения в новой вкладке
-    window.open("sim-deman-supply-analysis-marshall.html", "_blank");
+    // Жестко прописанный путь к симулятору в репозитории Microeconomics
+    window.open("https://ogaydv-prog.github.io/Microeconomics/sim-deman-supply-analysis-marshall.html", "_blank");
   });
 </script>
 

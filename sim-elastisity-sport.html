@@ -6,43 +6,50 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #0f172a; color: #f1f5f9; font-family: 'Inter', sans-serif; overflow: hidden; }
-        .chart-container { background: #1e293b; border-radius: 12px; border: 1px solid #334155; }
+        .chart-container { background: #1e293b; border-radius: 12px; border: 1px solid #334155; width: 100%; height: 230px; }
         .axis { stroke: #94a3b8; stroke-width: 1.5; }
         .grid { stroke: #334155; stroke-dasharray: 2; stroke-width: 0.5; }
-        .curve-d { fill: none; stroke: #38bdf8; stroke-width: 2; }
-        .curve-tr { fill: none; stroke: #fb923c; stroke-width: 2; }
+        .curve-d { fill: none; stroke: #38bdf8; stroke-width: 2.5; }
+        .curve-tr { fill: none; stroke: #fb923c; stroke-width: 2.5; }
         .pulse { animation: pulse 1s infinite; }
         @keyframes pulse { 0% { r: 6; } 50% { r: 10; fill: #22c55e; } 100% { r: 6; } }
     </style>
 </head>
-<body class="p-2">
-    <header class="bg-slate-900 p-3 rounded-xl border border-slate-700 mb-2 flex justify-between items-center">
+<body class="p-3">
+    <header class="bg-slate-900 p-4 rounded-xl border border-slate-700 mb-3 flex justify-between items-center shadow-lg">
         <div>
-            <h1 class="text-sm font-bold text-white">Количественный анализ спроса</h1>
-            <p class="text-[9px] text-slate-400 uppercase">Микроэкономика | БАиЭ | 2026</p>
+            <h1 class="text-lg font-bold text-white tracking-wide">Количественный анализ спроса и выручки</h1>
+            <p class="text-xs text-slate-400 uppercase tracking-wider">Микроэкономика • БАиЭ • AlmaU 2026</p>
         </div>
-        <div id="edBox" class="px-3 py-1 bg-slate-800 rounded-lg border border-slate-700 text-right">
-            <p class="text-[8px] uppercase text-slate-400">Коэфф. эластичности (Ed)</p>
-            <p id="edVal" class="text-sm font-bold text-white">-1.00</p>
+        <div id="edBox" class="px-4 py-2 bg-slate-800 rounded-lg border border-slate-700 text-right">
+            <p class="text-[10px] uppercase text-slate-400 font-semibold">Коэфф. эластичности (Ed)</p>
+            <p id="edVal" class="text-base font-black text-white">-1.00</p>
         </div>
     </header>
 
-    <div class="flex gap-2">
-        <aside class="w-64 bg-slate-900 p-4 rounded-xl border border-slate-700 flex flex-col gap-4">
+    <div class="flex gap-3">
+        <aside class="w-72 bg-slate-900 p-5 rounded-xl border border-slate-700 flex flex-col gap-4 shadow-xl">
             <div>
-                <label class="text-[10px] font-bold text-slate-400">Цена абонемента: <span id="pVal" class="text-sky-400">250к</span></label>
-                <input type="range" id="pRange" min="0" max="500000" step="5000" value="250000" class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-sky-500">
+                <label class="text-xs font-bold text-slate-300">Цена абонемента: <span id="pVal" class="text-sky-400 font-bold">250к</span></label>
+                <input type="range" id="pRange" min="0" max="500000" step="5000" value="250000" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-sky-500 mt-2">
             </div>
-            <div class="space-y-1 text-[11px]">
-                <p>Объем продаж: <span id="qDisplay" class="font-bold text-white">250</span></p>
-                <p>Общая выручка: <span id="trDisplay" class="font-bold text-orange-400">62.5M ₸</span></p>
+            
+            <div class="space-y-2 text-xs bg-slate-950/50 p-3 rounded-lg border border-slate-800">
+                <p class="flex justify-between">Объем продаж: <span id="qDisplay" class="font-bold text-white">250</span></p>
+                <p class="flex justify-between">Общая выручка: <span id="trDisplay" class="font-bold text-orange-400">62.5M ₸</span></p>
             </div>
-            <button id="toggleArea" class="py-2 bg-slate-700 hover:bg-sky-900 rounded-lg text-[10px] font-bold transition">Показать зону выручки</button>
+
+            <button id="toggleArea" class="py-2.5 bg-slate-800 hover:bg-sky-900 text-slate-200 rounded-lg text-xs font-bold transition border border-slate-700">Показать зону выручки</button>
+
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-[11px] leading-relaxed">
+                <span class="font-bold block mb-1 text-sky-400">Статус зоны:</span>
+                <p id="statusDesc" class="text-slate-300">Оптимальная ценовая зона с единичной эластичностью.</p>
+            </div>
         </aside>
 
-        <main class="flex-1 grid grid-rows-2 gap-2">
-            <svg id="chartD" viewBox="0 0 600 220" class="chart-container w-full h-[180px]"></svg>
-            <svg id="chartTR" viewBox="0 0 600 220" class="chart-container w-full h-[180px]"></svg>
+        <main class="flex-1 grid grid-rows-2 gap-3">
+            <svg id="chartD" viewBox="0 0 600 220" class="chart-container"></svg>
+            <svg id="chartTR" viewBox="0 0 600 220" class="chart-container"></svg>
         </main>
     </div>
 
@@ -50,7 +57,8 @@
     const pRange = document.getElementById('pRange'), pVal = document.getElementById('pVal'), 
           qDisp = document.getElementById('qDisplay'), trDisp = document.getElementById('trDisplay'),
           chartD = document.getElementById('chartD'), chartTR = document.getElementById('chartTR'),
-          edVal = document.getElementById('edVal'), edBox = document.getElementById('edBox');
+          edVal = document.getElementById('edVal'), edBox = document.getElementById('edBox'),
+          statusDesc = document.getElementById('statusDesc');
     let showArea = false;
 
     function render() {
@@ -64,21 +72,24 @@
         trDisp.textContent = (tr/1000000).toFixed(2) + "M ₸";
         edVal.textContent = ed.toFixed(2);
 
-        // Логика цвета: Ed < -1.05 (эластичный) - синий, Ed > -0.95 (неэластичный) - красный, иначе зеленый
-        let statusText = "";
+        let statusText = "", descText = "";
         if (ed < -1.05) {
-            edBox.className = "px-3 py-1 bg-blue-900/50 rounded-lg border border-blue-700 text-right";
-            edVal.className = "text-sm font-bold text-blue-400";
+            edBox.className = "px-4 py-2 bg-blue-900/50 rounded-lg border border-blue-700 text-right";
+            edVal.className = "text-base font-black text-blue-400";
             statusText = "Эластичный участок";
+            descText = "Снижение цены приведет к росту общей выручки (выручка растет, так как прирост объема перекрывает падение цены).";
         } else if (ed > -0.95) {
-            edBox.className = "px-3 py-1 bg-red-900/50 rounded-lg border border-red-700 text-right";
-            edVal.className = "text-sm font-bold text-red-400";
+            edBox.className = "px-4 py-2 bg-red-900/50 rounded-lg border border-red-700 text-right";
+            edVal.className = "text-base font-black text-red-400";
             statusText = "Неэластичный участок";
+            descText = "Повышение цены увеличит общую выручку, так как падение объема продаж незначительно по сравнению с ростом цены.";
         } else {
-            edBox.className = "px-3 py-1 bg-green-900/50 rounded-lg border border-green-700 text-right";
-            edVal.className = "text-sm font-bold text-green-400";
+            edBox.className = "px-4 py-2 bg-green-900/50 rounded-lg border border-green-700 text-right";
+            edVal.className = "text-base font-black text-green-400";
             statusText = "Единичная эластичность";
+            descText = "Точка максимума общей выручки (TR). Дальнейшее изменение цены не увеличит суммарный доход.";
         }
+        statusDesc.textContent = descText;
 
         const x = 50 + (q / 500) * 500; 
         const yD = 180 - (p / 500000) * 150; 
@@ -88,22 +99,25 @@
             ${Array.from({length: 11}, (_, i) => `<line x1="50" y1="${30 + i*15}" x2="550" y2="${30 + i*15}" class="grid"/>`).join('')}
             ${Array.from({length: 11}, (_, i) => `<line x1="${50 + i*50}" y1="30" x2="${50 + i*50}" y2="180" class="grid"/>`).join('')}
             <line x1="50" y1="180" x2="550" y2="180" class="axis"/> <line x1="50" y1="30" x2="50" y2="180" class="axis"/>
-            ${Array.from({length: 11}, (_, i) => `<text x="10" y="${185 - i*15}" font-size="8" fill="#94a3b8">${(isTR ? i*7 : i*50).toFixed(0)}${isTR ? 'M' : 'к'}</text>`).join('')}
-            ${Array.from({length: 11}, (_, i) => `<text x="${40 + i*50}" y="195" font-size="8" fill="#94a3b8">${i*50}</text>`).join('')}
+            ${Array.from({length: 11}, (_, i) => `<text x="10" y="${185 - i*15}" font-size="9" fill="#94a3b8">${(isTR ? i*7 : i*50).toFixed(0)}${isTR ? 'M' : 'к'}</text>`).join('')}
+            ${Array.from({length: 11}, (_, i) => `<text x="${40 + i*50}" y="195" font-size="9" fill="#94a3b8">${i*50}</text>`).join('')}
         `;
 
+        // Текст для верхнего графика (сдвинут вправо x="370", поднято вверх y="42")
         chartD.innerHTML = `${drawGrid(false)}
-            ${showArea ? `<rect x="50" y="${yD}" width="${x-50}" height="${180-yD}" fill="rgba(56, 189, 248, 0.2)"/>` : ''}
+            ${showArea ? `<rect x="50" y="${yD}" width="${x-50}" height="${180-yD}" fill="rgba(56, 189, 248, 0.25)"/>` : ''}
             <path d="M 50 30 L 550 180" class="curve-d"/>
-            <text x="300" y="50" font-size="12" font-weight="bold" fill="#94a3b8">${statusText}</text>
+            <text x="370" y="42" font-size="12" font-weight="bold" fill="#38bdf8">${statusText}</text>
             <line x1="${x}" y1="180" x2="${x}" y2="${yD}" stroke="#94a3b8" stroke-dasharray="4"/>
             <line x1="50" y1="${yD}" x2="${x}" y2="${yD}" stroke="#94a3b8" stroke-dasharray="4"/>
-            <circle cx="${x}" cy="${yD}" r="6" fill="${ed < -1.05 ? '#3b82f6' : (ed > -0.95 ? '#ef4444' : '#22c55e')}" class="${Math.abs(ed + 1) < 0.05 ? 'pulse' : ''}"/>`;
+            <circle cx="${x}" cy="${yD}" r="7" fill="${ed < -1.05 ? '#3b82f6' : (ed > -0.95 ? '#ef4444' : '#22c55e')}" class="${Math.abs(ed + 1) < 0.05 ? 'pulse' : ''}"/>`;
 
+        // Текст для нижнего графика (сдвинут вправо x="370", поднято вверх y="42")
         chartTR.innerHTML = `${drawGrid(true)}
             <path d="M 50 180 Q 300 -100 550 180" class="curve-tr"/>
+            <text x="370" y="42" font-size="12" font-weight="bold" fill="#fb923c">Максимизация TR</text>
             <line x1="${x}" y1="180" x2="${x}" y2="${yTR}" stroke="#94a3b8" stroke-dasharray="4"/>
-            <circle cx="${x}" cy="${yTR}" r="6" fill="#fb923c" class="${Math.abs(ed + 1) < 0.05 ? 'pulse' : ''}"/>`;
+            <circle cx="${x}" cy="${yTR}" r="7" fill="#fb923c" class="${Math.abs(ed + 1) < 0.05 ? 'pulse' : ''}"/>`;
     }
 
     pRange.addEventListener('input', render);

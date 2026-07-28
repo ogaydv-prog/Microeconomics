@@ -16,20 +16,21 @@
     font-family: 'Arial', sans-serif;
   }
 
-  /* 3D Контейнер для переворота — вернула стандартные 250px */
+  /* Адаптивный 3D Контейнер для переворота, как у видео-кнопки */
   .flip-card {
     background-color: transparent;
-    width: 250px;
-    height: 250px;
+    width: 100%;
+    max-width: 250px;
+    aspect-ratio: 1 / 1;
     perspective: 1000px;
     cursor: pointer;
-    transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.25s ease;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease;
   }
 
   /* Эффект увеличения и неоновой подсветки при наведении */
   .flip-card:hover {
-    transform: scale(1.05);
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2)) drop-shadow(0 0 12px rgba(20, 184, 166, 0.6));
+    transform: scale(1.04) translateY(-4px);
+    filter: drop-shadow(0 12px 20px rgba(0,0,0,0.2)) drop-shadow(0 0 15px rgba(20, 184, 166, 0.55));
   }
 
   /* Пружинящее сжатие при клике */
@@ -58,21 +59,25 @@
     height: 100%;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
     box-sizing: border-box;
   }
 
-  /* ЛИЦЕВАЯ СТОРОНА (Обложка) */
+  /* ЛИЦЕВАЯ СТОРОНА (Оригинальная картинка без обрезок) */
   .flip-card-front {
-    background-color: #ffffff;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .tile-img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain; /* Картинка полностью вписывается без обрезок по краям */
     display: block;
+    border-radius: 16px;
   }
 
   .flip-card-back {
@@ -167,19 +172,22 @@
 <div class="flip-card" id="cardContainer">
   <div class="flip-card-inner">
     
-    <!-- Лицевая сторона кнопки -->
+    <!-- Лицевая сторона кнопки с защитным onerror на Microeconomics -->
     <div class="flip-card-front" id="cardFront">
-      <img src="pic-articles3.png" class="tile-img" alt="Статьи для чтения 3">
+      <img src="pic-articles3.png" 
+           class="tile-img" 
+           alt="Статьи для чтения 3"
+           draggable="false"
+           onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/ogaydv-prog/Microeconomics/master/pic-articles3.png';">
     </div>
 
-    <!-- Обратная сторона кнопки с 2 ключевыми статьями -->
+    <!-- Обратная сторона кнопки с статьями -->
     <div class="flip-card-back">
       <div class="back-header">
         <span class="back-title">Статьи для анализа</span>
         <button class="btn-close" id="btnClose" title="Назад">✕</button>
       </div>
       
-      <!-- Список интерактивных ссылок по вашей теме -->
       <div class="article-list">
         <a href="https://www.ft.com/content/f9f54ec9-8129-45bb-b9d2-9aacda1278bf?syn-25a6b1a6=1" target="_blank" class="article-link" title="Financial Times: Анализ рыночных изменений">
           <strong>Financial Times</strong>
@@ -200,18 +208,15 @@
   const cardFront = document.getElementById('cardFront');
   const btnClose = document.getElementById('btnClose');
 
-  // Переворот на обратную сторону при клике по лицевой
   cardFront.addEventListener('click', function(e) {
     card.classList.add('flipped');
   });
 
-  // Переворот обратно при клике на крестик
   btnClose.addEventListener('click', function(e) {
-    e.stopPropagation(); // Исключаем повторный переворот карточки из-за всплытия события
+    e.stopPropagation();
     card.classList.remove('flipped');
   });
 
-  // Предотвращаем переворот карты обратно при переходе по внешним ссылкам
   const links = document.querySelectorAll('.article-link');
   links.forEach(link => {
     link.addEventListener('click', function(e) {

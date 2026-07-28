@@ -14,21 +14,23 @@
             justify-content: center;
             align-items: center;
             background-color: transparent;
+            height: 100vh;
         }
         
         .btn-img {
             transition: transform 0.3s ease, filter 0.3s ease;
             cursor: pointer;
             display: block;
-            /* Предотвращает обрезку и сохраняет правильные пропорции */
-            max-width: 100%;
+            max-width: 250px;
+            width: 100%;
             height: auto;
+            border-radius: 12px;
         }
 
         /* Эффект при наведении */
         .btn-img:hover {
             transform: scale(1.05);
-            filter: brightness(1.15) drop-shadow(0 0 10px rgba(255, 255, 255, 0.4));
+            filter: brightness(1.15) drop-shadow(0 10px 20px rgba(0,0,0,0.15)) drop-shadow(0 0 12px rgba(234, 179, 8, 0.65));
         }
 
         /* Эффект при нажатии */
@@ -39,12 +41,13 @@
 </head>
 <body>
 
-    <!-- Ссылка на симулятор в новом окне -->
-    <a href="sim-elasticity-banana3.html" target="_blank">
-        <img src="https://raw.githubusercontent.com/ogaydv-prog/Simulator-NPV/main/pic-sim-banana-elasticity3.png" 
-             alt="Симулятор эластичности" 
+    <!-- Ссылка ведет строго на симулятор эластичности бананов в репозитории Microeconomics -->
+    <a href="https://ogaydv-prog.github.io/Microeconomics/sim-elasticity-banana3.html" target="_blank">
+        <img src="pic-sim-banana-elasticity3.png" 
+             alt="Симулятор эластичности (Бананы)" 
              class="btn-img"
-             draggable="false">
+             draggable="false"
+             onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/ogaydv-prog/Microeconomics/master/pic-sim-banana-elasticity3.png';">
     </a>
 
 </body>

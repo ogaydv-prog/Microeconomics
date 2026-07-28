@@ -16,20 +16,21 @@
     font-family: 'Arial', sans-serif;
   }
 
-  /* 3D Контейнер для переворота */
+  /* Адаптивный 3D Контейнер для переворота, приведенный к стандарту симуляторов */
   .flip-card {
     background-color: transparent;
-    width: 250px;
-    height: 250px;
+    width: 100%;
+    max-width: 250px;
+    aspect-ratio: 1 / 1;
     perspective: 1000px;
     cursor: pointer;
-    transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.25s ease;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease;
   }
 
   /* Эффект увеличения и сочного оранжевого свечения всей плитки при наведении */
   .flip-card:hover {
-    transform: scale(1.05);
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2)) drop-shadow(0 0 12px rgba(249, 115, 22, 0.6));
+    transform: scale(1.04) translateY(-4px);
+    filter: brightness(1.12) drop-shadow(0 12px 20px rgba(249, 115, 22, 0.35)) drop-shadow(0 0 15px rgba(249, 115, 22, 0.55));
   }
 
   /* Внутренняя оболочка */
@@ -54,14 +55,14 @@
     height: 100%;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
     box-sizing: border-box;
   }
 
   /* ЛИЦЕВАЯ СТОРОНА (Картинка-обложка) */
   .flip-card-front {
-    background-color: #ffffff;
+    background-color: transparent;
   }
 
   .tile-img {
@@ -69,9 +70,10 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    border-radius: 16px;
   }
 
-  /* ОБРАТНАЯ СТОРОНА (Премиум тёмный список видео по эластичности) */
+  /* ОБРАТНАЯ СТОРОНА (Список видео по эластичности) */
   .flip-card-back {
     background-color: #111418;
     color: #ffffff;
@@ -118,7 +120,7 @@
     color: #ffffff;
   }
 
-  /* Список видеоссылок с прокруткой для 6 элементов */
+  /* Список видеоссылок с прокруткой */
   .video-list {
     display: flex;
     flex-direction: column;
@@ -128,7 +130,7 @@
     padding-right: 4px;
   }
 
-  /* Кастомизация скроллбара для списка ссылок */
+  /* Кастомизация скроллбара */
   .video-list::-webkit-scrollbar {
     width: 4px;
   }
@@ -171,9 +173,13 @@
 <div class="flip-card" id="cardContainer">
   <div class="flip-card-inner">
     
-    <!-- Лицевая сторона кнопки -->
+    <!-- Лицевая сторона кнопки с защитным onerror на Microeconomics -->
     <div class="flip-card-front" id="cardFront">
-      <img src="pic-video3.png" class="tile-img" alt="Видеоматериалы 3">
+      <img src="pic-video3.png" 
+           class="tile-img" 
+           alt="Видеоматериалы 3"
+           draggable="false"
+           onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/ogaydv-prog/Microeconomics/master/pic-video3.png';">
     </div>
 
     <!-- Обратная сторона кнопки -->
@@ -183,7 +189,7 @@
         <button class="btn-close" id="btnClose" title="Назад">✕</button>
       </div>
       
-      <!-- Список интерактивных ссылок по вашей теме -->
+      <!-- Список интерактивных ссылок -->
       <div class="video-list">
         <a href="https://www.youtube.com/watch?v=31Qb9aKm9mo" target="_blank" class="video-link" title="Как цена влияет на спрос">
           1. Как цена влияет на спрос (Теория)
@@ -220,8 +226,9 @@
   });
 
   // Переворот обратно при клике на крестик
+  cardClose = document.getElementById('btnClose');
   btnClose.addEventListener('click', function(e) {
-    e.stopPropagation(); // Останавливаем всплытие события, чтобы карточка снова не перевернулась
+    e.stopPropagation();
     card.classList.remove('flipped');
   });
 

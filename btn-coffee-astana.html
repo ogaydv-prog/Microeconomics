@@ -16,7 +16,7 @@
     height: 100vh;
   }
   
-  /* Фирменная пружинящая кнопка */
+  /* Наша фирменная пружинящая кнопка (шаблон лекций и симуляторов) */
   .main-tile-btn {
     background: none;
     border: none;
@@ -28,7 +28,7 @@
     -webkit-tap-highlight-color: transparent;
   }
   
-  /* Эффект увеличения и мягкого золотисто-янтарного свечения (под цвет новой шапки) */
+  /* Эффект увеличения и мягкого золотисто-янтарного свечения под стиль кофе */
   .main-tile-btn:hover {
     transform: scale(1.05);
     filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)) drop-shadow(0 0 12px rgba(234, 179, 8, 0.65));
@@ -40,7 +40,7 @@
   
   .tile-img {
     width: 100%;
-    max-width: 250px; /* Идеальный размер, соответствующий остальным плиткам */
+    max-width: 250px; /* Идеальный размер плитки */
     height: auto;
     display: block;
     border-radius: 12px;
@@ -49,18 +49,21 @@
 </head>
 <body>
 
+  <!-- Кнопка с изображением pic-task2.png -->
   <button id="btn-task" class="main-tile-btn">
-    <!-- Изображение вашей новой желтой карточки практического задания -->
-    <img src="pic-task2.png" class="tile-img" alt="Практическое задание: Симулятор рынка кофе Астаны" onerror="this.src='https://placehold.co/250x250/ffe082/1e293b?text=Задание+2'">
+    <img src="pic-task2.png" 
+         class="tile-img" 
+         alt="Практическое задание: Симулятор рынка кофе Астаны" 
+         draggable="false"
+         onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/ogaydv-prog/Microeconomics/master/pic-task2.png';">
   </button>
 
 <script>
   document.getElementById("btn-task").addEventListener("click", function() {
-    // Надежный переход к странице практического кейса
+    // Жестко прописанный точный путь к симулятору кофе в Астане
     window.open("https://ogaydv-prog.github.io/Microeconomics/task-coffee-astana.html", "_blank");
   });
 </script>
 
 </body>
-</html>
 </html>
